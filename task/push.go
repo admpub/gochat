@@ -8,8 +8,8 @@ package task
 import (
 	"encoding/json"
 	"github.com/sirupsen/logrus"
-	"gochat/config"
-	"gochat/proto"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
 	"math/rand"
 )
 

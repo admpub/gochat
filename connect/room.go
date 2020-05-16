@@ -7,7 +7,7 @@ package connect
 
 import (
 	"github.com/pkg/errors"
-	"gochat/proto"
+	"github.com/admpub/gochat/proto"
 	"sync"
 )
 

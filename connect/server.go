@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	"gochat/config"
-	"gochat/proto"
-	"gochat/tools"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 	"time"
 )
 

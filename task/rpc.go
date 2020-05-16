@@ -10,9 +10,9 @@ import (
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
-	"gochat/config"
-	"gochat/proto"
-	"gochat/tools"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 	"strconv"
 	"strings"
 )

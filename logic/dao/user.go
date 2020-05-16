@@ -7,7 +7,7 @@ package dao
 
 import (
 	"github.com/pkg/errors"
-	"gochat/db"
+	"github.com/admpub/gochat/db"
 	"time"
 )
 

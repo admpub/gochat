@@ -8,9 +8,9 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gochat/api/rpc"
-	"gochat/proto"
-	"gochat/tools"
+	"github.com/admpub/gochat/api/rpc"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 )
 
 type FormLogin struct {

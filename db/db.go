@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/sirupsen/logrus"
-	"gochat/config"
+	"github.com/admpub/gochat/config"
 	"path/filepath"
 	"sync"
 	"time"

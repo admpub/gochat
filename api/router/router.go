@@ -8,10 +8,10 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gochat/api/handler"
-	"gochat/api/rpc"
-	"gochat/proto"
-	"gochat/tools"
+	"github.com/admpub/gochat/api/handler"
+	"github.com/admpub/gochat/api/rpc"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 	"net/http"
 )
 

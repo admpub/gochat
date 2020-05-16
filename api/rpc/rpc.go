@@ -9,8 +9,8 @@ import (
 	"context"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
-	"gochat/config"
-	"gochat/proto"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
 	"sync"
 )
 

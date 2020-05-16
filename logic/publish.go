@@ -14,9 +14,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/server"
 	"github.com/smallnest/rpcx/serverplugin"
-	"gochat/config"
-	"gochat/proto"
-	"gochat/tools"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 	"strings"
 	"time"
 )

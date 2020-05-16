@@ -8,8 +8,8 @@ package task
 import (
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
-	"gochat/config"
-	"gochat/tools"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/tools"
 )
 
 var RedisClient *redis.Client

@@ -5,7 +5,7 @@
  */
 package connect
 
-import "gochat/proto"
+import "github.com/admpub/gochat/proto"
 
 type Operator interface {
 	Connect(conn *proto.ConnectRequest) (int, error)

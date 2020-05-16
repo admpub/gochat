@@ -7,7 +7,7 @@ package connect
 
 import (
 	"github.com/sirupsen/logrus"
-	"gochat/config"
+	"github.com/admpub/gochat/config"
 	"runtime"
 	"time"
 )
