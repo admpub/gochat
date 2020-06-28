@@ -18,9 +18,13 @@ import (
 
 const SessionPrefix = "sess_"
 
-func GetSnowflakeId() string {
+func GetSnowflakeId(nodeIDs ...int64) string {
 	//default node id eq 1,this can modify to different serverId node
-	node, _ := snowflake.NewNode(1)
+	var nodeID int64 = 1
+	if len(nodeIDs) > 0 {
+		nodeID = nodeIDs[0]
+	}
+	node, _ := snowflake.NewNode(nodeID)
 	// Generate a snowflake ID.
 	id := node.Generate().String()
 	return id

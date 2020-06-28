@@ -28,6 +28,7 @@ func GetRedisInstance(redisOpt RedisOption) *redis.Client {
 	password := redisOpt.Password
 	addr := fmt.Sprintf("%s", address)
 	syncLock.Lock()
+	defer syncLock.Unlock()
 	if redisCli, ok := RedisClientMap[addr]; ok {
 		return redisCli
 	}
@@ -38,6 +39,5 @@ func GetRedisInstance(redisOpt RedisOption) *redis.Client {
 		MaxConnAge: 20 * time.Second,
 	})
 	RedisClientMap[addr] = client
-	syncLock.Unlock()
 	return RedisClientMap[addr]
 }
