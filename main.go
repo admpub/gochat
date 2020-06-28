@@ -8,14 +8,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/admpub/gochat/api"
 	"github.com/admpub/gochat/connect"
 	"github.com/admpub/gochat/logic"
 	"github.com/admpub/gochat/site"
 	"github.com/admpub/gochat/task"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {

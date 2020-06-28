@@ -6,10 +6,11 @@
 package connect
 
 import (
+	"net/http"
+
+	"github.com/admpub/gochat/config"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/config"
-	"net/http"
 )
 
 func (c *Connect) InitWebsocket() error {

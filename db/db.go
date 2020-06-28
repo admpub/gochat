@@ -6,13 +6,14 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/config"
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/admpub/gochat/config"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/sirupsen/logrus"
 )
 
 var dbMap = map[string]*gorm.DB{}

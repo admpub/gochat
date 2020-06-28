@@ -6,9 +6,10 @@
 package connect
 
 import (
-	"github.com/admpub/gochat/proto"
 	"sync"
 	"sync/atomic"
+
+	"github.com/admpub/gochat/proto"
 )
 
 type Bucket struct {

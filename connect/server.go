@@ -8,12 +8,13 @@ package connect
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
+	"time"
+
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
 	"github.com/admpub/gochat/tools"
-	"time"
+	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {

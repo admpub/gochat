@@ -9,16 +9,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/api/router"
-	"github.com/admpub/gochat/api/rpc"
-	"github.com/admpub/gochat/config"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/admpub/gochat/api/router"
+	"github.com/admpub/gochat/api/rpc"
+	"github.com/admpub/gochat/config"
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type Chat struct {

@@ -10,9 +10,10 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"github.com/bwmarrin/snowflake"
 	"io"
 	"time"
+
+	"github.com/bwmarrin/snowflake"
 )
 
 const SessionPrefix = "sess_"

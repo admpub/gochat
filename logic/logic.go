@@ -6,9 +6,10 @@
 package logic
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/config"
 	"runtime"
+
+	"github.com/admpub/gochat/config"
+	"github.com/sirupsen/logrus"
 )
 
 type Logic struct {

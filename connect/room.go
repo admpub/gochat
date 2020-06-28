@@ -6,9 +6,10 @@
 package connect
 
 import (
-	"github.com/pkg/errors"
-	"github.com/admpub/gochat/proto"
 	"sync"
+
+	"github.com/admpub/gochat/proto"
+	"github.com/pkg/errors"
 )
 
 const NoRoom = -1

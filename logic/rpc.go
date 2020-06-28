@@ -9,14 +9,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"strconv"
+	"time"
+
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/logic/dao"
 	"github.com/admpub/gochat/proto"
 	"github.com/admpub/gochat/tools"
-	"strconv"
-	"time"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type RpcLogic struct {

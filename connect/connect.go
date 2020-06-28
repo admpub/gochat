@@ -6,10 +6,11 @@
 package connect
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/config"
 	"runtime"
 	"time"
+
+	"github.com/admpub/gochat/config"
+	"github.com/sirupsen/logrus"
 )
 
 var DefaultServer *Server

@@ -9,17 +9,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
+	"github.com/admpub/gochat/tools"
 	"github.com/rcrowley/go-metrics"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/server"
 	"github.com/smallnest/rpcx/serverplugin"
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/proto"
-	"github.com/admpub/gochat/tools"
-	"strings"
-	"sync"
-	"time"
 )
 
 var logicRpcClient client.XClient

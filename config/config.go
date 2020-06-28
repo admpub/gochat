@@ -6,10 +6,11 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/spf13/viper"
 )
 
 var once sync.Once

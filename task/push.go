@@ -7,10 +7,11 @@ package task
 
 import (
 	"encoding/json"
-	"github.com/sirupsen/logrus"
+	"math/rand"
+
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
-	"math/rand"
+	"github.com/sirupsen/logrus"
 )
 
 type PushParams struct {

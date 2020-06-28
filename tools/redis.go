@@ -7,9 +7,10 @@ package tools
 
 import (
 	"fmt"
-	"github.com/go-redis/redis"
 	"sync"
 	"time"
+
+	"github.com/go-redis/redis"
 )
 
 var RedisClientMap = map[string]*redis.Client{}

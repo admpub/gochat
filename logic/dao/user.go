@@ -6,9 +6,10 @@
 package dao
 
 import (
-	"github.com/pkg/errors"
-	"github.com/admpub/gochat/db"
 	"time"
+
+	"github.com/admpub/gochat/db"
+	"github.com/pkg/errors"
 )
 
 var dbIns = db.GetDb("gochat")

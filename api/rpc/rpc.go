@@ -7,11 +7,12 @@ package rpc
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
-	"github.com/smallnest/rpcx/client"
+	"sync"
+
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
-	"sync"
+	"github.com/sirupsen/logrus"
+	"github.com/smallnest/rpcx/client"
 )
 
 var LogicRpcClient client.XClient

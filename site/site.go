@@ -7,9 +7,10 @@ package site
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/admpub/gochat/config"
 	"net/http"
+
+	"github.com/admpub/gochat/config"
+	"github.com/sirupsen/logrus"
 )
 
 type Site struct {

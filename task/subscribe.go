@@ -6,10 +6,10 @@
 package task
 
 import (
-	"github.com/go-redis/redis"
-	"github.com/sirupsen/logrus"
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/tools"
+	"github.com/go-redis/redis"
+	"github.com/sirupsen/logrus"
 )
 
 var RedisClient *redis.Client

@@ -6,8 +6,8 @@
 package connect
 
 import (
-	"github.com/gorilla/websocket"
 	"github.com/admpub/gochat/proto"
+	"github.com/gorilla/websocket"
 )
 
 //in fact, Channel it's a user Connect session
