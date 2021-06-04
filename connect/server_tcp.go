@@ -9,14 +9,15 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
-	"gochat/api/rpc"
-	"gochat/config"
-	"gochat/pkg/stickpackage"
-	"gochat/proto"
 	"net"
 	"strings"
 	"time"
+
+	"github.com/admpub/gochat/api/rpc"
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/pkg/stickpackage"
+	"github.com/admpub/gochat/proto"
+	"github.com/sirupsen/logrus"
 )
 
 const maxInt = 1<<31 - 1

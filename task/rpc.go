@@ -13,6 +13,7 @@ import (
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
 	"github.com/admpub/gochat/tools"
+	etcdclient "github.com/rpcxio/rpcx-etcd/client"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
 )
@@ -21,7 +22,10 @@ var RpcConnectClientList map[string]client.XClient
 
 func (task *Task) InitConnectRpcClient() (err error) {
 	etcdConfig := config.Conf.Common.CommonEtcd
-	d := client.NewEtcdV3Discovery(etcdConfig.BasePath, etcdConfig.ServerPathConnect, []string{etcdConfig.Host}, nil)
+	d, err := etcdclient.NewEtcdV3Discovery(etcdConfig.BasePath, etcdConfig.ServerPathConnect, []string{etcdConfig.Host}, etcdConfig.AllowKeyNotFound, nil)
+	if err != nil {
+		return err
+	}
 	if len(d.GetServices()) <= 0 {
 		logrus.Panicf("no etcd server find!")
 	}
@@ -29,12 +33,15 @@ func (task *Task) InitConnectRpcClient() (err error) {
 	for _, connectConf := range d.GetServices() {
 		logrus.Infof("key is:%s,value is:%s", connectConf.Key, connectConf.Value)
 		connectConf.Value = strings.Replace(connectConf.Value, "=&tps=0", "", 1)
-		//serverId, err := strconv.ParseInt(connectConf.Value, 10, 64)
+		// serverId, err := strconv.ParseInt(connectConf.Value, 10, 64)
+		// if err != nil {
+		// 	logrus.Panicf("InitConnect err，Can't find serverId. error: %s", err.Error())
+		// }
 		serverId := connectConf.Value
+		d, err := client.NewPeer2PeerDiscovery(connectConf.Key, "")
 		if err != nil {
-			logrus.Panicf("InitConnect err，Can't find serverId. error: %s", err.Error())
+			return err
 		}
-		d := client.NewPeer2PeerDiscovery(connectConf.Key, "")
 		//under serverId
 		RpcConnectClientList[serverId] = client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 		logrus.Infof("InitConnectRpcClient addr %s, v %+v", connectConf.Key, RpcConnectClientList[serverId])

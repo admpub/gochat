@@ -5,10 +5,11 @@
 package task
 
 import (
-	"gochat/config"
-	"gochat/tools"
 	"testing"
 	"time"
+
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/tools"
 )
 
 func Test_TestQueue(t *testing.T) {

@@ -23,7 +23,7 @@ func main() {
 	var module string
 	flag.StringVar(&module, "module", "", "assign run module")
 	flag.Parse()
-	fmt.Println(fmt.Sprintf("start run %s module", module))
+	fmt.Printf("start run %s module\n", module)
 	switch module {
 	case "logic":
 		logic.New().Run()
@@ -38,11 +38,11 @@ func main() {
 	case "site":
 		site.New().Run()
 	default:
-		fmt.Println("exiting,module param error!")
+		fmt.Println("exiting, module param error!")
 		return
 	}
-	fmt.Println(fmt.Sprintf("run %s module done!", module))
-	quit := make(chan os.Signal)
+	fmt.Printf("run %s module done!\n", module)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-quit
 	fmt.Println("Server exiting")

@@ -8,7 +8,6 @@ package logic
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"strings"
 	"time"
 
@@ -17,9 +16,9 @@ import (
 	"github.com/admpub/gochat/tools"
 	"github.com/go-redis/redis"
 	"github.com/rcrowley/go-metrics"
+	etcdserverplugin "github.com/rpcxio/rpcx-etcd/serverplugin"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/server"
-	"github.com/smallnest/rpcx/serverplugin"
 )
 
 var RedisClient *redis.Client
@@ -59,7 +58,7 @@ func (logic *Logic) createRpcServer(network string, addr string) {
 	logic.addRegistryPlugin(s, network, addr)
 	// serverId must be unique
 	//err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", config.Conf.Logic.LogicBase.ServerId))
-	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", logic.ServerId))
+	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), logic.ServerId)
 	if err != nil {
 		logrus.Errorf("register error:%s", err.Error())
 	}
@@ -70,7 +69,7 @@ func (logic *Logic) createRpcServer(network string, addr string) {
 }
 
 func (logic *Logic) addRegistryPlugin(s *server.Server, network string, addr string) {
-	r := &serverplugin.EtcdV3RegisterPlugin{
+	r := &etcdserverplugin.EtcdV3RegisterPlugin{
 		ServiceAddress: network + "@" + addr,
 		EtcdServers:    []string{config.Conf.Common.CommonEtcd.Host},
 		BasePath:       config.Conf.Common.CommonEtcd.BasePath,

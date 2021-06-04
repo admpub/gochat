@@ -10,12 +10,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"gochat/config"
-	"gochat/proto"
 	"log"
 	"net"
 	"testing"
 	"time"
+
+	"github.com/admpub/gochat/config"
+	"github.com/admpub/gochat/proto"
 )
 
 func Test_TestStick(t *testing.T) {

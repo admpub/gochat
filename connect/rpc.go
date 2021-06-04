@@ -17,10 +17,11 @@ import (
 	"github.com/admpub/gochat/proto"
 	"github.com/admpub/gochat/tools"
 	"github.com/rcrowley/go-metrics"
+	etcdclient "github.com/rpcxio/rpcx-etcd/client"
+	etcdserverplugin "github.com/rpcxio/rpcx-etcd/serverplugin"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
 	"github.com/smallnest/rpcx/server"
-	"github.com/smallnest/rpcx/serverplugin"
 )
 
 var logicRpcClient client.XClient
@@ -31,14 +32,22 @@ type RpcConnect struct {
 
 func (c *Connect) InitLogicRpcClient() (err error) {
 	once.Do(func() {
-		d := client.NewEtcdV3Discovery(
+		var d client.ServiceDiscovery
+		d, err = etcdclient.NewEtcdV3Discovery(
 			config.Conf.Common.CommonEtcd.BasePath,
 			config.Conf.Common.CommonEtcd.ServerPathLogic,
 			[]string{config.Conf.Common.CommonEtcd.Host},
+			config.Conf.Common.CommonEtcd.AllowKeyNotFound,
 			nil,
 		)
+		if err != nil {
+			return
+		}
 		logicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 	})
+	if err != nil {
+		return
+	}
 	if logicRpcClient == nil {
 		return errors.New("get rpc client nil")
 	}
@@ -98,20 +107,20 @@ func (rpc *RpcConnectPush) PushSingleMsg(ctx context.Context, pushMsgReq *proto.
 		bucket  *Bucket
 		channel *Channel
 	)
-	logrus.Info("rpc PushMsg :%v ", pushMsgReq)
+	logrus.Infof("rpc PushMsg: %v", pushMsgReq)
 	if pushMsgReq == nil {
-		logrus.Errorf("rpc PushSingleMsg() args:(%v)", pushMsgReq)
+		logrus.Errorf("rpc PushSingleMsg() args: (%v)", pushMsgReq)
 		return
 	}
 	bucket = DefaultServer.Bucket(pushMsgReq.UserId)
 	if channel = bucket.Channel(pushMsgReq.UserId); channel != nil {
 		err = channel.Push(&pushMsgReq.Msg)
-		logrus.Infof("DefaultServer Channel err nil ,args: %v", pushMsgReq)
+		logrus.Infof("DefaultServer Channel err nil, args: %v", pushMsgReq)
 		return
 	}
 	successReply.Code = config.SuccessReplyCode
 	successReply.Msg = config.SuccessReplyMsg
-	logrus.Infof("successReply:%v", successReply)
+	logrus.Infof("successReply: %v", successReply)
 	return
 }
 
@@ -150,7 +159,7 @@ func (c *Connect) createConnectWebsocktsRpcServer(network string, addr string) {
 	addRegistryPlugin(s, network, addr)
 	//config.Conf.Connect.ConnectTcp.ServerId
 	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", config.Conf.Connect.ConnectWebsocket.ServerId))
-	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", c.ServerId))
+	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), c.ServerId)
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
 	})
@@ -169,7 +178,7 @@ func (c *Connect) createConnectTcpRpcServer(network string, addr string) {
 }
 
 func addRegistryPlugin(s *server.Server, network string, addr string) {
-	r := &serverplugin.EtcdV3RegisterPlugin{
+	r := &etcdserverplugin.EtcdV3RegisterPlugin{
 		ServiceAddress: network + "@" + addr,
 		EtcdServers:    []string{config.Conf.Common.CommonEtcd.Host},
 		BasePath:       config.Conf.Common.CommonEtcd.BasePath,

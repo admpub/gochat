@@ -11,6 +11,7 @@ import (
 
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
+	etcdclient "github.com/rpcxio/rpcx-etcd/client"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
 )
@@ -25,12 +26,17 @@ var RpcLogicObj *RpcLogic
 
 func InitLogicRpcClient() {
 	once.Do(func() {
-		d := client.NewEtcdV3Discovery(
+		d, err := etcdclient.NewEtcdV3Discovery(
 			config.Conf.Common.CommonEtcd.BasePath,
 			config.Conf.Common.CommonEtcd.ServerPathLogic,
 			[]string{config.Conf.Common.CommonEtcd.Host},
+			config.Conf.Common.CommonEtcd.AllowKeyNotFound,
 			nil,
 		)
+		if err != nil {
+			logrus.Errorf("get logic rpc client failed: %s", err.Error())
+			return
+		}
 		LogicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 		RpcLogicObj = new(RpcLogic)
 	})
