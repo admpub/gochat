@@ -15,7 +15,7 @@ import (
 )
 
 type PushParams struct {
-	ServerId int
+	ServerId string
 	UserId   int
 	Msg      []byte
 	RoomId   int
@@ -47,7 +47,7 @@ func (task *Task) Push(msg string) {
 	if err := json.Unmarshal([]byte(msg), m); err != nil {
 		logrus.Errorf("json.Unmarshal err:%v ", err)
 	}
-	logrus.Infof("push msg info %s", m)
+	logrus.Infof("push msg info %v", m)
 	switch m.Op {
 	case config.OpSingleSend:
 		pushChannel[rand.Int()%config.Conf.Task.TaskBase.PushChan] <- &PushParams{

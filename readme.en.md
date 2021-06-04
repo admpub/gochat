@@ -4,7 +4,6 @@
 <img src="https://img.shields.io/badge/documentation-yes-brightgreen.svg">
 <img src="https://img.shields.io/github/license/LockGit/gochat">
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
-[![HitCount](http://hits.dwyl.io/LockGit/gochat.svg)](http://hits.dwyl.io/LockGit/gochat)
 <img src="https://img.shields.io/github/contributors/LockGit/gochat">
 <img src="https://img.shields.io/github/last-commit/LockGit/gochat">
 <img src="https://img.shields.io/github/issues/LockGit/gochat"> 
@@ -16,32 +15,49 @@
 
 ### [中文版本(Chinese version)](readme.md)
 
-### Gochat is a lightweight im server implemented using pure go
+### gochat is a lightweight im server implemented using pure go
+* gochat is an instant messaging system based on go. It supports private message messages and room broadcast messages. It communicates with each other through RPC and supports horizontal expansion.
+* Support websocket and TCP access, and support websocket and TCP message interworking in the latest version.
+* Based on etcd service discovery among different layers, it will be much more convenient to expand and deploy.
+* Using redis as the carrier of message storage and delivery is very lightweight, and it can be replaced by heavier Kafka and rabbitmq in actual scenarios.
+* Because of the clear structure of chago, it can run quickly on various platforms.
+* This project provides docker with one click to build all environment dependencies, which is very convenient to install. (if it's an experience, we strongly recommend using docker to build)
+
+### About Websocket && Tcp Support
 ```
-gochat is an instant messaging system implemented by pure go. 
-It supports private message and room broadcast messages. 
-rpc communication is provided between layers to support horizontal expansion.
-Using redis as a carrier for message storage and delivery, 
-it is more convenient and faster to operate than kafka.
-so it is very lightweight. 
-Based on the etcd service discovery between layers, 
-it will be much more convenient when expanding and deploying.
-Due to the cross-compilation feature of go, 
-it can be run on various platforms quickly after compilation. 
-The gochat architecture and directory structure are clear.
-And the project also provides docker one-click to build all environment dependencies, 
-which is very convenient to install.
+The latest version supports websocket and TCP message interworking,(the test TCP port uses 70017002. If you want to use TCP, the firewall also needs to release the two ports.)
+TCP message delivery and receiving test code in the pkg/stickpackage directory of this project: stickpackage_test.go Test in file_Tcpclient method
+among stickpackage.go The file is mainly used for TCP unpacking and unpacking. You can trace where the pack and unpack methods are called.
+The main reason is that TCP is based on the streaming protocol of layer 4 rather than the application layer protocol, so there is this process.
+If it is Android, IOS client to link, then the corresponding is to use a familiar language to implement the TCP unpacking and unpacking process. The code in the example is demo implemented by golang.
+go test -v -count=1 *.go -test.run Test_TcpClient
+
+For test TCP message delivery:
+Just change the @ todo part of this method to the correct content when you tested it.
+AuthToken is the authentication token for TCP link. This token is the user ID. you can see the JSON return in the API return after login on the web, or you can directly find the token of a user in redis.
+When the server receives the authToken, it will add the corresponding user's TCP link session to the session bidirectional list of the corresponding room.
+
+After adding TCP support, if there are both users linking through websocket and users linking through TCP in a room, the general process of message delivery is as follows:
+1. First, the user logs in, carries the token and room number to connect to the websocket and TCP server, and establishes a long link session in the link layer,
+For example, user a is in room 1 and linked through websocket, and user B is also in room 1 through TCP.
+
+2. Users send messages to the room. At present, they directly put the messages into the corresponding message queue through HTTP,
+In fact, this place can also be sent through websocket and TCP, but the final messages are to be queued.
+
+3. The message in the queue is consumed by the task layer, and the RPC is broadcast to the corresponding rooms of the websocket link layer and the TCP link layer,
+After getting the message, the link layer delivers the message to the corresponding remote user (equivalent to traversing the user link session bidirectional list maintained in the room)
 ```
+![](./architecture/gochat_tcp.gif)
 
 ### Architecture design
- ![](https://github.com/LockGit/gochat/blob/master/architecture/gochat.png)
+ ![](./architecture/gochat.png)
 
 ### Service discovery
-![](https://github.com/LockGit/gochat/blob/master/architecture/gochat_discovery.png)
+![](./architecture/gochat_discovery.png)
 
 
 ### Message delivery
-![](https://github.com/LockGit/gochat/blob/master/architecture/single_send.png)
+![](./architecture/single_send.png)
 ```
 The message must be sent in the login state. As shown above, User A sends a message to User B. 
 Then experienced the following process:
@@ -81,8 +97,22 @@ Connect layer:
 ```
 
 ### Chat room preview
-![](https://github.com/LockGit/gochat/blob/master/architecture/gochat.gif)
+![](./architecture/gochat.gif)
 
+### Internal structure of user long connect session
+![](./architecture/session.png)
+
+### Dividing buckets to reduce lock competition
+![](./architecture/lock_competition.png)
+
+### Making hash distribution more uniform based on cityhash
+![](./architecture/hash.png)
+
+### Preview of the internal structure of a single server in the connect layer
+![](./architecture/gochat_room.png)
+
+### Simple pressure measurement
+![](./architecture/pressure_test.png)
 
 ### Directory Structure
 ```
@@ -162,7 +192,7 @@ create table user(
 ### Installation
 ```
 Before starting each layer, 
-Please make sure that the 7000, 7070, 8080 ports are not occupied.
+Please make sure that the 7000, 7070, 8080 ports are not occupied. (the test TCP port uses 70017002. If you want to use TCP, the firewall also needs to release the two ports.)
 make sure that the etcd and redis services and the above database tables have been started, 
 and then start the layers in the following order. 
 
@@ -176,7 +206,9 @@ go build -o gochat.bin -tags=etcd main.go
 ./gochat.bin -module logic
 
 2,Start the connect layer
-./gochat.bin -module connect
+./gochat.bin -module connect_tcp
+or  
+./gochat.bin -module connect_websocket
 
 3,Start the task layer
 ./gochat.bin -module task
@@ -219,13 +251,14 @@ And make sure there are no firewall restrictions on the relevant ports on the vp
 ```
 
 ### Here is an online chat demo site:
-<a href="http://www.lockhack.cf:8080" target="_blank">http://www.lockhack.cf:8080</a>
+<a href="http://www.gochat.ml:8080" target="_blank">http://www.gochat.ml:8080</a>
 ```
 Log in with the above user name and password, or register one by yourself.
 if the provide url can't visit one day，please use the docker above to visit it.
 You can log in to different browsers with different accounts. 
 If it is Chrome, you can use several browsers in incognito mode to log in with different accounts.
 Then, experience the chat between different accounts and the effect of message delivery.
+(Note: TCP channel is not enabled in this demo)
 ```
 
 ### Follow-up
@@ -236,20 +269,6 @@ Please contact the relevant issue for any questions in use,
 and follow up and optimize the relevant code according to the actual situation.
 ```
 
-### Discuss
-```
-Because some students mentioned the issue proposal to establish a communication group, 
-the following two QR codes are provided for technical learning exchange and recording related technical experience, 
-and advertising is prohibited.
-```
->QQ Group
-
-![QQ](https://github.com/LockGit/gochat/blob/master/architecture/gochat-qq.jpg)
-
->Wechat (Share something interesting from time to time)
-
-![Wechat](https://github.com/LockGit/gochat/blob/master/architecture/gochat-wx.jpg)
-
 ### Backer and Sponsor
 >jetbrains
 
@@ -257,5 +276,10 @@ and advertising is prohibited.
 <img src="https://github.com/LockGit/gochat/blob/master/architecture/jetbrains-gold-reseller.svg" width="100px" height="100px">
 </a>
 
+```
+JetBrains has an open source sponsorship program that allows you to apply for the JetBrains family bucket license for free through the open source project
+Jetbranins officials will ask for the proposal to add their brand logo to the warehouse when giving the license,
+But all this is the principle of users' willingness
+```
 ### License
 gochat is licensed under the MIT License. 

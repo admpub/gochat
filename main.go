@@ -27,8 +27,10 @@ func main() {
 	switch module {
 	case "logic":
 		logic.New().Run()
-	case "connect":
+	case "connect_websocket":
 		connect.New().Run()
+	case "connect_tcp":
+		connect.New().RunTcp()
 	case "task":
 		task.New().Run()
 	case "api":
@@ -41,7 +43,7 @@ func main() {
 	}
 	fmt.Println(fmt.Sprintf("run %s module done!", module))
 	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGTSTP)
+	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-quit
 	fmt.Println("Server exiting")
 }

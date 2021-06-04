@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/proto"
 	"github.com/admpub/gochat/tools"
 	"github.com/gorilla/websocket"
@@ -50,7 +49,7 @@ func (s *Server) Bucket(userId int) *Bucket {
 	return s.Buckets[idx]
 }
 
-func (s *Server) writePump(ch *Channel) {
+func (s *Server) writePump(ch *Channel, c *Connect) {
 	//PingPeriod default eq 54s
 	ticker := time.NewTicker(s.Options.PingPeriod)
 	defer func() {
@@ -89,7 +88,7 @@ func (s *Server) writePump(ch *Channel) {
 	}
 }
 
-func (s *Server) readPump(ch *Channel) {
+func (s *Server) readPump(ch *Channel, c *Connect) {
 	defer func() {
 		logrus.Infof("start exec disConnect ...")
 		if ch.Room == nil || ch.userId == 0 {
@@ -135,7 +134,7 @@ func (s *Server) readPump(ch *Channel) {
 			logrus.Errorf("s.operator.Connect no authToken")
 			return
 		}
-		connReq.ServerId = config.Conf.Connect.ConnectBase.ServerId
+		connReq.ServerId = c.ServerId //config.Conf.Connect.ConnectWebsocket.ServerId
 		userId, err := s.operator.Connect(connReq)
 		if err != nil {
 			logrus.Errorf("s.operator.Connect error %s", err.Error())

@@ -8,7 +8,6 @@ package task
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 	"strings"
 
 	"github.com/admpub/gochat/config"
@@ -18,7 +17,7 @@ import (
 	"github.com/smallnest/rpcx/client"
 )
 
-var RpcConnectClientList map[int]client.XClient
+var RpcConnectClientList map[string]client.XClient
 
 func (task *Task) InitConnectRpcClient() (err error) {
 	etcdConfig := config.Conf.Common.CommonEtcd
@@ -26,21 +25,24 @@ func (task *Task) InitConnectRpcClient() (err error) {
 	if len(d.GetServices()) <= 0 {
 		logrus.Panicf("no etcd server find!")
 	}
-	RpcConnectClientList = make(map[int]client.XClient, len(d.GetServices()))
+	RpcConnectClientList = make(map[string]client.XClient, len(d.GetServices()))
 	for _, connectConf := range d.GetServices() {
+		logrus.Infof("key is:%s,value is:%s", connectConf.Key, connectConf.Value)
 		connectConf.Value = strings.Replace(connectConf.Value, "=&tps=0", "", 1)
-		serverId, error := strconv.ParseInt(connectConf.Value, 10, 8)
-		if error != nil {
-			logrus.Panicf("InitComets err，Can't find serverId. error: %s", error)
+		//serverId, err := strconv.ParseInt(connectConf.Value, 10, 64)
+		serverId := connectConf.Value
+		if err != nil {
+			logrus.Panicf("InitConnect err，Can't find serverId. error: %s", err.Error())
 		}
 		d := client.NewPeer2PeerDiscovery(connectConf.Key, "")
-		RpcConnectClientList[int(serverId)] = client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, d, client.DefaultOption)
-		logrus.Infof("InitConnectRpcClient addr %s, v %+v", connectConf.Key, RpcConnectClientList[int(serverId)])
+		//under serverId
+		RpcConnectClientList[serverId] = client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, d, client.DefaultOption)
+		logrus.Infof("InitConnectRpcClient addr %s, v %+v", connectConf.Key, RpcConnectClientList[serverId])
 	}
 	return
 }
 
-func (task *Task) pushSingleToConnect(serverId int, userId int, msg []byte) {
+func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 	logrus.Infof("pushSingleToConnect Body %s", string(msg))
 	pushMsgReq := &proto.PushMsgRequest{
 		UserId: userId,

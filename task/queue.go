@@ -6,6 +6,8 @@
 package task
 
 import (
+	"time"
+
 	"github.com/admpub/gochat/config"
 	"github.com/admpub/gochat/tools"
 	"github.com/go-redis/redis"
@@ -14,7 +16,7 @@ import (
 
 var RedisClient *redis.Client
 
-func (task *Task) InitSubscribeRedisClient() (err error) {
+func (task *Task) InitQueueRedisClient() (err error) {
 	redisOpt := tools.RedisOption{
 		Address:  config.Conf.Common.CommonRedis.RedisAddress,
 		Password: config.Conf.Common.CommonRedis.RedisPassword,
@@ -24,17 +26,17 @@ func (task *Task) InitSubscribeRedisClient() (err error) {
 	if pong, err := RedisClient.Ping().Result(); err != nil {
 		logrus.Infof("RedisClient Ping Result pong: %s,  err: %s", pong, err)
 	}
-
 	go func() {
-		redisSub := RedisClient.Subscribe(config.QueueName)
-		ch := redisSub.Channel()
 		for {
-			msg, ok := <-ch
-			if !ok {
-				logrus.Debugf("redisSub Channel !ok: %v", ok)
-				break
+			var result []string
+			//10s timeout
+			result, err = RedisClient.BRPop(time.Second*10, config.QueueName).Result()
+			if err != nil {
+				logrus.Infof("task queue block timeout,no msg err:%s", err.Error())
 			}
-			task.Push(msg.Payload)
+			if len(result) >= 2 {
+				task.Push(result[1])
+			}
 		}
 	}()
 	return

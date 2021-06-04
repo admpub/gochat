@@ -4,36 +4,60 @@
 <img src="https://img.shields.io/badge/documentation-yes-brightgreen.svg">
 <img src="https://img.shields.io/github/license/LockGit/gochat">
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
-[![HitCount](http://hits.dwyl.io/LockGit/gochat.svg)](http://hits.dwyl.io/LockGit/gochat)
 <img src="https://img.shields.io/github/contributors/LockGit/gochat">
 <img src="https://img.shields.io/github/last-commit/LockGit/gochat">
 <img src="https://img.shields.io/github/issues/LockGit/gochat"> 
-<img src="https://img.shields.io/github/forks/LockGit/gochat"> 
+<img src="https://img.shields.io/github/forks/LockGit/gochat">
 <img src="https://img.shields.io/github/stars/LockGit/gochat">
-<img src="https://img.shields.io/docker/pulls/lockgit/gochat">
 <img src="https://img.shields.io/github/repo-size/LockGit/gochat">
 <img src="https://img.shields.io/github/followers/LockGit">
 
 ### [English version(英文版本)](readme.en.md)
 
 ### gochat是一个使用纯go实现的轻量级im系统 
+* gochat为纯go实现的即时通讯系统,支持私信消息与房间广播消息,各层之间通过rpc通讯,支持水平扩展。
+* 支持websocket,tcp接入,并且在最新的版本中已经支持websocket,tcp消息互通。
+* 各层之间基于etcd服务发现,在扩容部署时将会方便很多。
+* 使用redis作为消息存储与投递的载体,十分轻量,在实际场景中还可以替换为更重的类似kafka,rabbitMQ。
+* 由于go的交叉编译特性,编译后可以快速在各个平台上运行,gochat架构及目录结构清晰。
+* 本项目贴心的提供了docker一键构建所有环境依赖,安装起来十分便捷。(如果是体验，强烈建议使用docker构建)
+
+### Websocket && Tcp消息互通 
 ```
-gochat为纯go实现的即时通讯系统,支持私信消息与房间广播消息,各层之间通过rpc通讯,支持水平扩展。
-使用redis作为消息存储与投递的载体,相对kafka操作起来更加方便快捷,所以十分轻量。
-各层之间基于etcd服务发现,在扩容部署时将会方便很多。
-由于go的交叉编译特性,编译后可以快速在各个平台上运行,gochat架构及目录结构清晰,
-并且本项目还贴心的提供了docker一键构建所有环境依赖,安装起来十分便捷。
+关于最新版本支持支持websocket,tcp消息互通部分的说明：
+tcp消息投递与接收测试代码在本项目pkg/stickpackage目录中的:stickpackage_test.go文件中的Test_TcpClient方法
+其中stickpackage.go文件主要为实现tcp拆包解包时用到，可以追踪下其中Pack与Unpack方法的调用地方。
+主要原因是tcp是基于第4层的流式协议而非应用层协议，所以才有了这个过程。
+如果是android，ios客户端来链接，那么对应的就是需要用熟悉的语言来实现这个tcp拆包解包的过程，例子中的代码是golang实现的demo。
+go test -v -count=1 *.go -test.run Test_TcpClient
+
+如果是测试tcp消息投递:
+只需要修改这个方法中@todo部分的内容为你测试时正确的内容即可,测试tcp端口使用7001，7002，如果是在个人vps上,注意配置防火墙放行相关端口。
+authToken为进行tcp链接时的认证token，这个token是用户标识，在web上登录后的api返回中可以看到json返回，也可以直接在redis中去查到某一个用户的token。
+服务端接收到这个authToken时会把对应用户tcp链接会话加入到相应房间的会话双向链表中。
+
+加入支持tcp后,如果一个房间中既有通过websocket进行链接的用户，又有通过tcp进行链接的用户，那么消息投递大致流程：
+1，首先用户登录，携带token，房间号去连接websocket,tcp服务端，在链接层建立长链接会话，
+比如用户A在房间1，通过websocket链接，用户B也在房间1，通过tcp链接。
+
+2，用户向房间内发送消息，目前是直接把消息通过http投到相应消息队列中，
+这个地方，其实也可以通过websocket,tcp来发，不过最终消息都是要进队列的。
+
+3，task层消费队列中的消息，rpc广播到websocket链接层和tcp链接层的相应房间中，
+链接层获得消息后，把消息投递到对应的远端用户(相当于遍历房间中维护的用户链接会话双向链表)
 ```
+![](./architecture/gochat_tcp.gif)
+
 
 ### 架构设计
- ![](https://github.com/LockGit/gochat/blob/master/architecture/gochat.png)
+ ![](./architecture/gochat.png)
 
 ### 服务发现
-![](https://github.com/LockGit/gochat/blob/master/architecture/gochat_discovery.png)
+![](./architecture/gochat_discovery.png)
 
 
 ### 消息投递 
-![](https://github.com/LockGit/gochat/blob/master/architecture/single_send.png)
+![](./architecture/single_send.png)
 ```
 消息发送必须在登录状态下,如上图,用户A向用户B发送了一条消息。那么经历了如下历程：
 1,用户A调用api层接口登录系统,登录成功后与connect层认证保持长链接,
@@ -64,7 +88,22 @@ connect层:
 ```
 
 ### 聊天室预览
-![](https://github.com/LockGit/gochat/blob/master/architecture/gochat.gif)
+![](./architecture/gochat.gif)
+
+### 用户长链接会话内部结构
+![](./architecture/session.png)
+
+### 划分bucket减小锁竞争
+![](./architecture/lock_competition.png)
+
+### 基于CityHash让hash分布的更均匀
+![](./architecture/hash.png)
+
+### 链接层的单个server内部结构预览
+![](./architecture/gochat_room.png)
+
+### 简单压测
+![](./architecture/pressure_test.png)
 
 ### 目录结构
 ```
@@ -138,7 +177,7 @@ create table user(
 ### 安装
 ```
 在启动各层之前,请确保已经启动了etcd与redis服务以及以上数据库表,
-并确保7000, 7070, 8080端口没有被占用。
+并确保7000, 7070, 8080端口没有被占用。（测试tcp端口使用7001，7002，如果要使用tcp,那么防火墙也需要放行这两个端口）
 然后按照以下顺序启动各层,如果要扩容connect层,
 请确保connect层配置中各个serverId不一样!
 
@@ -149,7 +188,9 @@ go build -o gochat.bin -tags=etcd main.go
 ./gochat.bin -module logic
 
 2,启动connect层
-./gochat.bin -module connect
+./gochat.bin -module connect_tcp
+或者  
+./gochat.bin -module connect_websocket
 
 3,启动task层
 ./gochat.bin -module task
@@ -190,13 +231,22 @@ docker build -f docker/Dockerfile . -t lockgit/gochat
 ```
 
 ### 这里提供一个在线聊天demo站点：
-<a href="http://www.lockhack.cf:8080" target="_blank">http://www.lockhack.cf:8080</a>
+<a href="http://www.gochat.ml:8080" target="_blank">http://www.gochat.ml:8080</a>
 ```
 用以上用户名密码登录即可,也可以自己注册一个。如果无法访问了，请使用以上docker在本地构建体验。
 可用不同的账号在不同的浏览器登录,如果是Chrome,可用以隐身模式多启动几个浏览器分别以不同账号登录,
-然后,体验不同账号之间聊天以及消息投递效果。
+然后,体验不同账号之间聊天以及消息投递效果。(注:本demo未开启tcp的通道)
 ```
 
+### 相关问题解答
+```
+整理出了几个讨论比较多的问题:
+1，在发送消息的时候是通过http,为什么不是websocket?
+这是server demo im,完全可以通过websocket来发送，效果一样，把相关逻辑处理放到websocket里即可，目前的消息通过http发送后也是rpc call后面的链接层进入队列
+
+2，消息是否存储数据库?
+没有存储，消息目前仅仅是在队列里流了一遍后投递出去，可以自己加存储逻辑
+```
 
 ### 后续
 ```
@@ -204,24 +254,18 @@ gochat实现了简单聊天室功能,由于精力有限,你可以在此基础上
 使用中的任何问题请提相关issue,后续会根据实际情况完善和优化相关代码与设计。
 ```
 
-### 交流群
-```
-因有同学提issue建议建立交流群，所以提供以下两个二维码，用于技术学习交流和记录相关技术心得，禁止广告。
-```
->QQ群 
-
-![QQ群](https://github.com/LockGit/gochat/blob/master/architecture/gochat-qq.jpg)
-
->公众号 (不定时分享一些有意思的东西)
-
-![微信](https://github.com/LockGit/gochat/blob/master/architecture/gochat-wx.jpg)
-
 ### Backer and Sponsor
 >jetbrains
 
 <a href="https://www.jetbrains.com/?from=LockGit/gochat" target="_blank">
 <img src="https://github.com/LockGit/gochat/blob/master/architecture/jetbrains-gold-reseller.svg" width="100px" height="100px">
 </a>
+
+```
+jetbrains有一项开源赞助计划，可以通过开源项目免费申请jetbrains全家桶license
+jetbranins官方在赠送license的时候会请求提议加入他们的品牌logo推广放入到仓库中,
+不过这一切都是用户自愿的原则
+```
 
 ### License
 gochat is licensed under the MIT License. 

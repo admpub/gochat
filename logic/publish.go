@@ -58,7 +58,8 @@ func (logic *Logic) createRpcServer(network string, addr string) {
 	s := server.NewServer()
 	logic.addRegistryPlugin(s, network, addr)
 	// serverId must be unique
-	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%d", config.Conf.Common.CommonEtcd.ServerId))
+	//err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", config.Conf.Logic.LogicBase.ServerId))
+	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", logic.ServerId))
 	if err != nil {
 		logrus.Errorf("register error:%s", err.Error())
 	}
@@ -83,7 +84,7 @@ func (logic *Logic) addRegistryPlugin(s *server.Server, network string, addr str
 	s.Plugins.Add(r)
 }
 
-func (logic *Logic) RedisPublishChannel(serverId int, toUserId int, msg []byte) (err error) {
+func (logic *Logic) RedisPublishChannel(serverId string, toUserId int, msg []byte) (err error) {
 	redisMsg := proto.RedisMsg{
 		Op:       config.OpSingleSend,
 		ServerId: serverId,
@@ -96,8 +97,8 @@ func (logic *Logic) RedisPublishChannel(serverId int, toUserId int, msg []byte) 
 		return err
 	}
 	redisChannel := config.QueueName
-	if err := RedisClient.Publish(redisChannel, redisMsgStr).Err(); err != nil {
-		logrus.Errorf("logic,RedisPublishChannel err:%s", err.Error())
+	if err := RedisClient.LPush(redisChannel, redisMsgStr).Err(); err != nil {
+		logrus.Errorf("logic,lpush err:%s", err.Error())
 		return err
 	}
 	return
@@ -116,7 +117,7 @@ func (logic *Logic) RedisPublishRoomInfo(roomId int, count int, RoomUserInfo map
 		logrus.Errorf("logic,RedisPublishRoomInfo redisMsg error : %s", err.Error())
 		return
 	}
-	err = RedisClient.Publish(config.QueueName, redisMsgByte).Err()
+	err = RedisClient.LPush(config.QueueName, redisMsgByte).Err()
 	if err != nil {
 		logrus.Errorf("logic,RedisPublishRoomInfo redisMsg error : %s", err.Error())
 		return
@@ -135,7 +136,7 @@ func (logic *Logic) RedisPushRoomCount(roomId int, count int) (err error) {
 		logrus.Errorf("logic,RedisPushRoomCount redisMsg error : %s", err.Error())
 		return
 	}
-	err = RedisClient.Publish(config.QueueName, redisMsgByte).Err()
+	err = RedisClient.LPush(config.QueueName, redisMsgByte).Err()
 	if err != nil {
 		logrus.Errorf("logic,RedisPushRoomCount redisMsg error : %s", err.Error())
 		return
@@ -155,7 +156,7 @@ func (logic *Logic) RedisPushRoomInfo(roomId int, count int, roomUserInfo map[st
 		logrus.Errorf("logic,RedisPushRoomInfo redisMsg error : %s", err.Error())
 		return
 	}
-	err = RedisClient.Publish(config.QueueName, redisMsgByte).Err()
+	err = RedisClient.LPush(config.QueueName, redisMsgByte).Err()
 	if err != nil {
 		logrus.Errorf("logic,RedisPushRoomInfo redisMsg error : %s", err.Error())
 		return
