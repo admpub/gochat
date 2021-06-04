@@ -68,6 +68,7 @@ function getRoomInfo() {
     $.ajax({
         type: "POST",
         dataType: "json",
+        contentType: "application/json",
         url: apiUrl + "/push/getRoomInfo",
         data: JSON.stringify(jsonData),
         success: function (result) {
@@ -87,6 +88,7 @@ function getRoomUserCount() {
     $.ajax({
         type: "POST",
         dataType: "json",
+        contentType: "application/json",
         url: apiUrl + "/push/count",
         data: JSON.stringify(jsonData),
         success: function (result) {
@@ -119,6 +121,8 @@ function send() {
     $.ajax({
         type: "POST",
         dataType: "json",
+        contentType: 'application/json',
+        crossDomain: true,// 开启跨域支持
         url: apiUrl + "/push/pushRoom",
         data: JSON.stringify(jsonData),
         success: function (result) {
@@ -129,8 +133,8 @@ function send() {
                 window.location.href = "/register.html";
             }
         },
-        error: function () {
-            swal("sorry, exception！");
+        error: function (xhr, status, err) {
+            swal("sorry, exception！"+err.message);
         }
     });
 }
@@ -141,6 +145,7 @@ function logout() {
     $.ajax({
         type: "POST",
         dataType: "json",
+        contentType: "application/json",
         url: apiUrl + "/user/logout",
         data: JSON.stringify(jsonData),
         success: function (result) {

@@ -109,8 +109,11 @@ func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	}
 	reply := &proto.SuccessReply{}
 	for _, rpc := range RpcConnectClientList {
-		logrus.Infof("broadcastRoomCountToConnect rpc  %v", rpc)
-		rpc.Call(context.Background(), "PushRoomCount", pushRoomMsgReq, reply)
+		logrus.Infof("broadcastRoomCountToConnect rpc %+v", rpc)
+		err := rpc.Call(context.Background(), "PushRoomCount", pushRoomMsgReq, reply)
+		if err != nil {
+			logrus.Error(err)
+		}
 		logrus.Infof("reply %s", reply.Msg)
 	}
 }
