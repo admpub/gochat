@@ -1,3 +1,4 @@
 .vscode
 gochat.bin
 default.etcd
+dump.db
