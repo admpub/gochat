@@ -132,39 +132,38 @@ connect层:
 ```
 
 ### 相关组件
-```
-语言：golang
 
-数据库：sqlite3 
+* **语言：golang**
+
+* **数据库：sqlite3**
 可以根据实际业务场景替换成mysql或者其他数据库,
 在本项目中为方便演示,使用sqlite替代大型关系型数据库,仅存储了简单用户信息
 
-数据库ORM：gorm 
-
-服务发现：etcd
-
-rpc通讯：rpcx
-
-队列:redis 
+* **数据库ORM：gorm**
+* **服务发现：etcd**
+* **rpc通讯：rpcx**
+* **队列:redis**
 方便演示使用redis,可以根据实际情况替换为kafka或者rabbitmq
 
-缓存:redis 
+* **缓存:redis**
 存储用户session,以及相关计数器,聊天室房间信息等
 
-消息id:
-snowflakeId算法,此部分可以单独拆分成微服务,使其成为基础服务的一部分。
+* **消息id:snowflakeId算法**
+此部分可以单独拆分成微服务,使其成为基础服务的一部分。
 该id发号器qps理论最高409.6w/s,互联网上没有哪一家公司可以达到这么高的并发,除非遭受DDOS攻击
-```
 
 ### 数据库及表结构
-```
+
 在本demo中,为了足够轻量方便演示,数据库使用了sqlite3,基于gorm,所以这个是可以替换的。
 如果需要替换其他关系型数据库,仅仅只需要修改相关db驱动即可。
 
 相关表结构：
+
+```shell
 cd db && sqlite3 gochat.sqlite3
 .tables
 ```
+
 ```sqlite
 create table user(
   `id` INTEGER PRIMARY KEY autoincrement , -- '用户id'
@@ -175,32 +174,52 @@ create table user(
 ```
 
 ### 安装
-```
 在启动各层之前,请确保已经启动了etcd与redis服务以及以上数据库表,
 并确保7000, 7070, 8080端口没有被占用。（测试tcp端口使用7001，7002，如果要使用tcp,那么防火墙也需要放行这两个端口）
 然后按照以下顺序启动各层,如果要扩容connect层,
 请确保connect层配置中各个serverId不一样!
 
-0,编译
-go build -o gochat.bin -tags=etcd main.go
+1. 编译
 
-1,启动logic层
-./gochat.bin -module logic
+  ```shell
+  go build -o gochat.bin -tags=etcd main.go
+  ```
 
-2,启动connect层
-./gochat.bin -module connect_tcp
-或者  
-./gochat.bin -module connect_websocket
+2. 启动logic层
 
-3,启动task层
-./gochat.bin -module task
+  ```shell
+  ./gochat.bin -module logic
+  ```
 
-4,启动api层
-./gochat.bin -module api 
+3. 启动connect层
 
-5,启动一个站点,开始聊天室
-./gochat.bin -module site
-```
+  ```shell
+  ./gochat.bin -module connect_tcp
+  ```
+
+  或者
+
+  ```shell
+  ./gochat.bin -module connect_websocket
+  ```
+
+4. 启动task层
+
+  ```shell
+  ./gochat.bin -module task
+  ```
+
+5. 启动api层
+
+  ```shell
+  ./gochat.bin -module api
+  ```
+
+6. 启动一个站点,开始聊天室
+
+  ```shell
+  ./gochat.bin -module site
+  ```
 
 ### 使用docker一键启动 
 ```
@@ -268,6 +287,4 @@ jetbranins官方在赠送license的时候会请求提议加入他们的品牌log
 ```
 
 ### License
-gochat is licensed under the MIT License. 
-
-
+gochat is licensed under the MIT License.

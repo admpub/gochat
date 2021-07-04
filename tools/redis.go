@@ -6,7 +6,6 @@
 package tools
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -23,10 +22,9 @@ type RedisOption struct {
 }
 
 func GetRedisInstance(redisOpt RedisOption) *redis.Client {
-	address := redisOpt.Address
+	addr := redisOpt.Address
 	db := redisOpt.Db
 	password := redisOpt.Password
-	addr := fmt.Sprintf("%s", address)
 	syncLock.Lock()
 	defer syncLock.Unlock()
 	if redisCli, ok := RedisClientMap[addr]; ok {

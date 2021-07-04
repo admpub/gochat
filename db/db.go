@@ -43,11 +43,8 @@ func initDB(dbName string) {
 }
 
 func GetDb(dbName string) (db *gorm.DB) {
-	if db, ok := dbMap[dbName]; ok {
-		return db
-	} else {
-		return nil
-	}
+	db, _ = dbMap[dbName]
+	return
 }
 
 type DbGoChat struct {

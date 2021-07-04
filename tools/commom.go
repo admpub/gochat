@@ -24,7 +24,10 @@ func GetSnowflakeId(nodeIDs ...int64) string {
 	if len(nodeIDs) > 0 {
 		nodeID = nodeIDs[0]
 	}
-	node, _ := snowflake.NewNode(nodeID)
+	node, err := snowflake.NewNode(nodeID)
+	if err != nil {
+		panic(err)
+	}
 	// Generate a snowflake ID.
 	id := node.Generate().String()
 	return id
