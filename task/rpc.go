@@ -31,7 +31,7 @@ func (task *Task) InitConnectRpcClient() (err error) {
 	}
 	RpcConnectClientList = make(map[string]client.XClient, len(d.GetServices()))
 	for _, connectConf := range d.GetServices() {
-		logrus.Infof("key is:%s,value is:%s", connectConf.Key, connectConf.Value)
+		logrus.Infof("key is:%s, value is:%s", connectConf.Key, connectConf.Value)
 		connectConf.Value = strings.Replace(connectConf.Value, "=&tps=0", "", 1)
 		// serverId, err := strconv.ParseInt(connectConf.Value, 10, 64)
 		// if err != nil {
@@ -64,7 +64,7 @@ func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 	//todo lock
 	err := RpcConnectClientList[serverId].Call(context.Background(), "PushSingleMsg", pushMsgReq, reply)
 	if err != nil {
-		logrus.Infof(" pushSingleToConnect Call err %v", err)
+		logrus.Infof("pushSingleToConnect Call err %v", err)
 	}
 	logrus.Infof("reply %s", reply.Msg)
 }

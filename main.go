@@ -10,18 +10,22 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	"github.com/admpub/gochat/api"
 	"github.com/admpub/gochat/connect"
 	"github.com/admpub/gochat/logic"
+	"github.com/admpub/gochat/pkg/exec"
 	"github.com/admpub/gochat/site"
 	"github.com/admpub/gochat/task"
 )
 
 func main() {
 	var module string
+	var other string
 	flag.StringVar(&module, "module", "", "assign run module")
+	flag.StringVar(&other, "other", "", "other parameter")
 	flag.Parse()
 	fmt.Printf("start run %s module\n", module)
 	switch module {
@@ -37,6 +41,9 @@ func main() {
 		api.New().Run()
 	case "site":
 		site.New().Run()
+	case "all":
+		withServiceCmd, _ := strconv.ParseBool(other)
+		exec.StartAll(withServiceCmd)
 	default:
 		fmt.Println("exiting, module param error!")
 		return

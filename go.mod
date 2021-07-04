@@ -3,6 +3,7 @@ module github.com/admpub/gochat
 go 1.16
 
 require (
+	github.com/admpub/fsnotify v1.4.4 // indirect
 	github.com/apache/thrift v0.14.2 // indirect
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/bwmarrin/snowflake v0.3.0
@@ -13,6 +14,7 @@ require (
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.0 // indirect
+	github.com/goccy/go-json v0.7.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.2.0
@@ -43,6 +45,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/valyala/fastrand v1.0.0 // indirect
+	github.com/webx-top/com v0.2.3
 	go.etcd.io/etcd/client/v3 v3.5.0 // indirect
 	go.uber.org/atomic v1.8.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
