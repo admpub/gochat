@@ -1,5 +1,7 @@
 go build -o gochat.bin -tags=etcd main.go
 sudo pkill -9 gochat.bin
+sudo pkill -9 etcd
+sudo pkill -9 redis-server
 etcd &
 redis-server &
 sleep 5
