@@ -2,3 +2,4 @@
 gochat.bin
 default.etcd
 dump.db
+*.env
