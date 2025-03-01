@@ -196,7 +196,7 @@ func (c *Connect) readDataFromTcp(s *Server, ch *Channel) {
 					Op:           config.OpRoomSend,
 				}
 				code, msg := rpc.RpcLogicObj.PushRoom(req)
-				logrus.Infof("tcp conn push msg to room,err code is: %d, err msg is: %s", code, msg)
+				logrus.Infof("tcp conn push msg to room, err code is: %d, err msg is: %s", code, msg)
 			}
 		}
 		if err := scannerPackage.Err(); err != nil {

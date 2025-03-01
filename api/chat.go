@@ -50,7 +50,7 @@ func (c *Chat) Run() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logrus.Errorf("start listen : %s\n", err)
+			logrus.Errorf("start listen: %s\n", err)
 		}
 	}()
 	// if have two quit signal, this signal will priority capture, also can graceful shutdown

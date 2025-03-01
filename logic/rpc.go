@@ -185,7 +185,7 @@ func (rpc *RpcLogic) Push(ctx context.Context, args *proto.Send, reply *proto.Su
 	var bodyBytes []byte
 	bodyBytes, err = json.Marshal(sendData)
 	if err != nil {
-		logrus.Errorf("logic,push msg fail,err: %s", err.Error())
+		logrus.Errorf("logic,push msg fail, err: %s", err.Error())
 		return
 	}
 	logic := new(Logic)
@@ -317,7 +317,7 @@ func (rpc *RpcLogic) Connect(ctx context.Context, args *proto.ConnectRequest, re
 	roomUserKey := logic.getRoomUserKey(strconv.Itoa(args.RoomId))
 	if reply.UserId != 0 {
 		userKey := logic.getUserKey(fmt.Sprintf("%d", reply.UserId))
-		logrus.Infof("logic redis set userKey: %s, serverId : %s", userKey, args.ServerId)
+		logrus.Infof("logic redis set userKey: %s, serverId: %s", userKey, args.ServerId)
 		validTime := config.RedisBaseValidTime * time.Second
 		err = RedisClient.Set(userKey, args.ServerId, validTime).Err()
 		if err != nil {
@@ -329,7 +329,7 @@ func (rpc *RpcLogic) Connect(ctx context.Context, args *proto.ConnectRequest, re
 			RedisClient.Incr(logic.getRoomOnlineCountKey(fmt.Sprintf("%d", args.RoomId)))
 		}
 	}
-	logrus.Infof("logic rpc userId:%d", reply.UserId)
+	logrus.Infof("logic rpc userId: %d", reply.UserId)
 	return
 }
 
@@ -347,7 +347,7 @@ func (rpc *RpcLogic) DisConnect(ctx context.Context, args *proto.DisConnectReque
 	if args.UserId != 0 {
 		err = RedisClient.HDel(roomUserKey, fmt.Sprintf("%d", args.UserId)).Err()
 		if err != nil {
-			logrus.Warnf("HDel getRoomUserKey err : %s", err)
+			logrus.Warnf("HDel getRoomUserKey err: %s", err)
 		}
 	}
 	//below code can optimize send a signal to queue,another process get a signal from queue,then push event to websocket
