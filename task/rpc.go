@@ -143,10 +143,10 @@ func (task *Task) watchServicesChange(d client.ServiceDiscovery) {
 		logrus.Infof("connect services change trigger...")
 		insMap := make(map[string][]Instance)
 		for _, kv := range kvChan {
-			logrus.Infof("connect services change,key is: %s,value is: %s", kv.Key, kv.Value)
+			logrus.Infof("connect services change, key is: %s, value is: %s", kv.Key, kv.Value)
 			serverType := getParamByKey(kv.Value, "serverType")
 			serverId := getParamByKey(kv.Value, "serverId")
-			logrus.Infof("serverType is: %s,serverId is: %s", serverType, serverId)
+			logrus.Infof("serverType is: %s, serverId is: %s", serverType, serverId)
 			if serverType == "" || serverId == "" {
 				continue
 			}
@@ -224,7 +224,7 @@ func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	var body []byte
 	var err error
 	if body, err = json.Marshal(msg); err != nil {
-		logrus.Warnf("broadcastRoomCountToConnect  json.Marshal err: %s", err.Error())
+		logrus.Warnf("broadcastRoomCountToConnect json.Marshal err: %s", err.Error())
 		return
 	}
 	pushRoomMsgReq := &proto.PushRoomMsgRequest{
@@ -239,7 +239,7 @@ func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	reply := &proto.SuccessReply{}
 	rpcList := RClient.GetAllConnectTypeRpcClient()
 	for _, rpc := range rpcList {
-		logrus.Infof("broadcastRoomCountToConnect rpc  %v", rpc)
+		logrus.Infof("broadcastRoomCountToConnect rpc %v", rpc)
 		rpc.Call(context.Background(), "PushRoomCount", pushRoomMsgReq, reply)
 		logrus.Infof("reply %s", reply.Msg)
 	}
@@ -270,8 +270,8 @@ func (task *Task) broadcastRoomInfoToConnect(roomId int, roomUserInfo map[string
 	reply := &proto.SuccessReply{}
 	rpcList := RClient.GetAllConnectTypeRpcClient()
 	for _, rpc := range rpcList {
-		logrus.Infof("broadcastRoomInfoToConnect rpc  %v", rpc)
+		logrus.Infof("broadcastRoomInfoToConnect rpc %v", rpc)
 		rpc.Call(context.Background(), "PushRoomInfo", pushRoomMsgReq, reply)
-		logrus.Infof("broadcastRoomInfoToConnect rpc  reply %v", reply)
+		logrus.Infof("broadcastRoomInfoToConnect rpc reply %v", reply)
 	}
 }

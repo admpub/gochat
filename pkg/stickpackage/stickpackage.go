@@ -26,7 +26,13 @@ type StickPackage struct {
 func (p *StickPackage) Pack(writer io.Writer) error {
 	var err error
 	err = binary.Write(writer, binary.BigEndian, &p.Version)
+	if err != nil {
+		return err
+	}
 	err = binary.Write(writer, binary.BigEndian, &p.Length)
+	if err != nil {
+		return err
+	}
 	err = binary.Write(writer, binary.BigEndian, &p.Msg)
 	return err
 }
@@ -34,14 +40,20 @@ func (p *StickPackage) Pack(writer io.Writer) error {
 func (p *StickPackage) Unpack(reader io.Reader) error {
 	var err error
 	err = binary.Read(reader, binary.BigEndian, &p.Version)
+	if err != nil {
+		return err
+	}
 	err = binary.Read(reader, binary.BigEndian, &p.Length)
+	if err != nil {
+		return err
+	}
 	p.Msg = make([]byte, p.Length-4)
 	err = binary.Read(reader, binary.BigEndian, &p.Msg)
 	return err
 }
 
 func (p *StickPackage) String() string {
-	return fmt.Sprintf("version: %s length:%d msg: %s",
+	return fmt.Sprintf("version: %s length: %d msg: %s",
 		p.Version,
 		p.Length,
 		p.Msg,
