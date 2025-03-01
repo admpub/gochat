@@ -6,6 +6,7 @@
 package task
 
 import (
+	"errors"
 	"runtime"
 
 	"gochat/config"
@@ -30,8 +31,22 @@ func (task *Task) Run() {
 	}
 	//rpc call connect layer send msg
 	if err := task.InitConnectRpcClient(); err != nil {
+		if errors.Is(err, ErrNotFoundETCDServer) {
+			err = config.Retry(`task init InitConnectRpcClient`, func() (bool, error) {
+				err := task.InitConnectRpcClient()
+				if err != nil {
+					return errors.Is(err, ErrNotFoundETCDServer), err
+				}
+				return false, err
+			}, err, 10)
+			if err == nil {
+				goto END
+			}
+		}
 		logrus.Panicf("task init InitConnectRpcClient fail, err: %s", err.Error())
 	}
+
+END:
 	//GoPush
 	task.GoPush()
 }

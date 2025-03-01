@@ -50,13 +50,20 @@ func (c *Connect) InitLogicRpcClient() (err error) {
 			etcdConfigOption,
 		)
 		if e != nil {
+			e = config.Retry(`[connect]init connect rpc etcd discovery client`, func() (bool, error) {
+				d, e = etcdV3.NewEtcdV3Discovery(
+					config.Conf.Common.CommonEtcd.BasePath,
+					config.Conf.Common.CommonEtcd.ServerPathLogic,
+					[]string{config.Conf.Common.CommonEtcd.Host},
+					true,
+					etcdConfigOption,
+				)
+				return e != nil, err
+			}, e, 10)
 			logrus.Fatalf("init connect rpc etcd discovery client fail: %s", e.Error())
 		}
 		logicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 	})
-	if err != nil {
-		return
-	}
 	if logicRpcClient == nil {
 		return errors.New("get rpc client nil")
 	}

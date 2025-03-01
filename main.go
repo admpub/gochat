@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"gochat/api"
@@ -24,16 +23,16 @@ import (
 
 func main() {
 	var module string
-	var other string
+	var other bool
 	flag.StringVar(&module, "module", "", "assign run module")
-	flag.StringVar(&other, "other", "", "other parameter")
+	flag.BoolVar(&other, "other", false, "other parameter")
 	flag.Parse()
 	fmt.Printf("start run %s module\n", module)
 	switch module {
 	case "logic":
 		logic.New().Run()
 	case "connect_websocket":
-		connect.New().Run()
+		go connect.New().Run()
 	case "connect_tcp":
 		connect.New().RunTcp()
 	case "task":
@@ -41,12 +40,12 @@ func main() {
 	case "api":
 		api.New().Run()
 	case "site":
-		site.New().Run()
+		go site.New().Run()
 	case "all":
-		withServiceCmd, _ := strconv.ParseBool(other)
+		withServiceCmd := other
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
-		exec.StartAll(ctx, withServiceCmd)
+		go exec.StartAll(ctx, withServiceCmd)
 	default:
 		fmt.Println("exiting, module param error!")
 		return
