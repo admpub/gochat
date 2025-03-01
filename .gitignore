@@ -2,5 +2,6 @@
 gochat.bin
 default.etcd
 dump.db
+dump.rdb
 *.env
 .idea
