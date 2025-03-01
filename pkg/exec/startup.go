@@ -24,13 +24,13 @@ func StartAll(ctx context.Context, withServiceCmd bool) error {
 	}
 	if withServiceCmd {
 		for _, cmd := range serviceCmds {
-			logrus.Infof(`startup service: %s`, cmd)
+			logrus.Infof(`starting service: %s`, cmd)
 			com.RunCmdStrWriterWithContext(ctx, cmd)
 		}
 		time.Sleep(5 * time.Second)
 	}
 	for _, cmd := range moduleCmds {
-		logrus.Infof(`startup cmd: %s`, cmd)
+		logrus.Infof(`execute command: %s`, cmd)
 		com.RunCmdStrWriterWithContext(ctx, cmd)
 	}
 	return nil
