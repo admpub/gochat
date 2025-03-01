@@ -36,7 +36,7 @@ func (c *Connect) Run() {
 
 	//init logic layer rpc client, call logic layer rpc server
 	if err := c.InitLogicRpcClient(); err != nil {
-		logrus.Panicf("InitLogicRpcClient err:%s", err.Error())
+		logrus.Panicf("InitLogicRpcClient err: %s", err.Error())
 	}
 	//init Connect layer rpc server, logic client will call this
 	Buckets := make([]*Bucket, connectConfig.ConnectBucket.CpuNum)
@@ -79,7 +79,7 @@ func (c *Connect) RunTcp() {
 
 	//init logic layer rpc client, call logic layer rpc server
 	if err := c.InitLogicRpcClient(); err != nil {
-		logrus.Panicf("InitLogicRpcClient err:%s", err.Error())
+		logrus.Panicf("InitLogicRpcClient err: %s", err.Error())
 	}
 	//init Connect layer rpc server, logic client will call this
 	Buckets := make([]*Bucket, connectConfig.ConnectBucket.CpuNum)

@@ -60,7 +60,7 @@ func (rc *RpcConnectClient) GetAllConnectTypeRpcClient() (rpcClientList []client
 	for serverId, _ := range rc.ServerInsMap {
 		c, err := rc.GetRpcClientByServerId(serverId)
 		if err != nil {
-			logrus.Infof("GetAllConnectTypeRpcClient err:%s", err.Error())
+			logrus.Infof("GetAllConnectTypeRpcClient err: %s", err.Error())
 			continue
 		}
 		rpcClientList = append(rpcClientList, c)
@@ -98,23 +98,23 @@ func (task *Task) InitConnectRpcClient() (err error) {
 		etcdConfigOption,
 	)
 	if e != nil {
-		logrus.Fatalf("init task rpc etcd discovery client fail:%s", e.Error())
+		logrus.Fatalf("init task rpc etcd discovery client fail: %s", e.Error())
 	}
 	if len(d.GetServices()) <= 0 {
 		logrus.Panicf("no etcd server find!")
 	}
 	for _, connectConf := range d.GetServices() {
-		logrus.Infof("key is:%s,value is:%s", connectConf.Key, connectConf.Value)
+		logrus.Infof("key is: %s,value is: %s", connectConf.Key, connectConf.Value)
 		//RpcConnectClients
 		serverType := getParamByKey(connectConf.Value, "serverType")
 		serverId := getParamByKey(connectConf.Value, "serverId")
-		logrus.Infof("serverType is:%s,serverId is:%s", serverType, serverId)
+		logrus.Infof("serverType is: %s,serverId is: %s", serverType, serverId)
 		if serverType == "" || serverId == "" {
 			continue
 		}
 		d, e := client.NewPeer2PeerDiscovery(connectConf.Key, "")
 		if e != nil {
-			logrus.Errorf("init task client.NewPeer2PeerDiscovery client fail:%s", e.Error())
+			logrus.Errorf("init task client.NewPeer2PeerDiscovery client fail: %s", e.Error())
 			continue
 		}
 		c := client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, d, client.DefaultOption)
@@ -143,16 +143,16 @@ func (task *Task) watchServicesChange(d client.ServiceDiscovery) {
 		logrus.Infof("connect services change trigger...")
 		insMap := make(map[string][]Instance)
 		for _, kv := range kvChan {
-			logrus.Infof("connect services change,key is:%s,value is:%s", kv.Key, kv.Value)
+			logrus.Infof("connect services change,key is: %s,value is: %s", kv.Key, kv.Value)
 			serverType := getParamByKey(kv.Value, "serverType")
 			serverId := getParamByKey(kv.Value, "serverId")
-			logrus.Infof("serverType is:%s,serverId is:%s", serverType, serverId)
+			logrus.Infof("serverType is: %s,serverId is: %s", serverType, serverId)
 			if serverType == "" || serverId == "" {
 				continue
 			}
 			d, e := client.NewPeer2PeerDiscovery(kv.Key, "")
 			if e != nil {
-				logrus.Errorf("init task client.NewPeer2PeerDiscovery watch client fail:%s", e.Error())
+				logrus.Errorf("init task client.NewPeer2PeerDiscovery watch client fail: %s", e.Error())
 				continue
 			}
 			c := client.NewXClient(etcdConfig.ServerPathConnect, client.Failtry, client.RandomSelect, d, client.DefaultOption)
@@ -224,7 +224,7 @@ func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	var body []byte
 	var err error
 	if body, err = json.Marshal(msg); err != nil {
-		logrus.Warnf("broadcastRoomCountToConnect  json.Marshal err :%s", err.Error())
+		logrus.Warnf("broadcastRoomCountToConnect  json.Marshal err: %s", err.Error())
 		return
 	}
 	pushRoomMsgReq := &proto.PushRoomMsgRequest{
@@ -255,7 +255,7 @@ func (task *Task) broadcastRoomInfoToConnect(roomId int, roomUserInfo map[string
 	var body []byte
 	var err error
 	if body, err = json.Marshal(msg); err != nil {
-		logrus.Warnf("broadcastRoomInfoToConnect  json.Marshal err :%s", err.Error())
+		logrus.Warnf("broadcastRoomInfoToConnect json.Marshal err: %s", err.Error())
 		return
 	}
 	pushRoomMsgReq := &proto.PushRoomMsgRequest{

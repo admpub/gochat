@@ -50,7 +50,7 @@ func (c *Connect) InitLogicRpcClient() (err error) {
 			etcdConfigOption,
 		)
 		if e != nil {
-			logrus.Fatalf("init connect rpc etcd discovery client fail:%s", e.Error())
+			logrus.Fatalf("init connect rpc etcd discovery client fail: %s", e.Error())
 		}
 		logicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 	})
@@ -70,7 +70,7 @@ func (rpc *RpcConnect) Connect(connReq *proto.ConnectRequest) (uid int, err erro
 		logrus.Fatalf("failed to call: %v", err)
 	}
 	uid = reply.UserId
-	logrus.Infof("connect logic userId :%d", reply.UserId)
+	logrus.Infof("connect logic userId: %d", reply.UserId)
 	return
 }
 
@@ -87,9 +87,9 @@ func (c *Connect) InitConnectWebsocketRpcServer() (err error) {
 	connectRpcAddress := strings.Split(config.Conf.Connect.ConnectRpcAddressWebSockts.Address, ",")
 	for _, bind := range connectRpcAddress {
 		if network, addr, err = tools.ParseNetwork(bind); err != nil {
-			logrus.Panicf("InitConnectWebsocketRpcServer ParseNetwork error : %s", err)
+			logrus.Panicf("InitConnectWebsocketRpcServer ParseNetwork error: %s", err)
 		}
-		logrus.Infof("Connect start run at-->%s:%s", network, addr)
+		logrus.Infof("Connect start run at-->%s: %s", network, addr)
 		go c.createConnectWebsocktsRpcServer(network, addr)
 	}
 	return
@@ -100,9 +100,9 @@ func (c *Connect) InitConnectTcpRpcServer() (err error) {
 	connectRpcAddress := strings.Split(config.Conf.Connect.ConnectRpcAddressTcp.Address, ",")
 	for _, bind := range connectRpcAddress {
 		if network, addr, err = tools.ParseNetwork(bind); err != nil {
-			logrus.Panicf("InitConnectTcpRpcServer ParseNetwork error : %s", err)
+			logrus.Panicf("InitConnectTcpRpcServer ParseNetwork error: %s", err)
 		}
-		logrus.Infof("Connect start run at-->%s:%s", network, addr)
+		logrus.Infof("Connect start run at-->%s: %s", network, addr)
 		go c.createConnectTcpRpcServer(network, addr)
 	}
 	return

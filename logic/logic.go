@@ -31,7 +31,7 @@ func (logic *Logic) Run() {
 	logic.ServerId = fmt.Sprintf("logic-%s", uuid.New().String())
 	//init publish redis
 	if err := logic.InitPublishRedisClient(); err != nil {
-		logrus.Panicf("logic init publishRedisClient fail,err:%s", err.Error())
+		logrus.Panicf("logic init publishRedisClient fail,err: %s", err.Error())
 	}
 
 	//init rpc server

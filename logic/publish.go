@@ -47,7 +47,7 @@ func (logic *Logic) InitRpcServer() (err error) {
 		if network, addr, err = tools.ParseNetwork(bind); err != nil {
 			logrus.Panicf("InitLogicRpc ParseNetwork error : %s", err.Error())
 		}
-		logrus.Infof("logic start run at-->%s:%s", network, addr)
+		logrus.Infof("logic start run at-->%s: %s", network, addr)
 		go logic.createRpcServer(network, addr)
 	}
 	return
@@ -60,7 +60,7 @@ func (logic *Logic) createRpcServer(network string, addr string) {
 	//err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), fmt.Sprintf("%s", config.Conf.Logic.LogicBase.ServerId))
 	err := s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathLogic, new(RpcLogic), logic.ServerId)
 	if err != nil {
-		logrus.Errorf("register error:%s", err.Error())
+		logrus.Errorf("register error: %s", err.Error())
 	}
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
@@ -92,12 +92,12 @@ func (logic *Logic) RedisPublishChannel(serverId string, toUserId int, msg []byt
 	}
 	redisMsgStr, err := json.Marshal(redisMsg)
 	if err != nil {
-		logrus.Errorf("logic,RedisPublishChannel Marshal err:%s", err.Error())
+		logrus.Errorf("logic,RedisPublishChannel Marshal err: %s", err.Error())
 		return err
 	}
 	redisChannel := config.QueueName
 	if err := RedisClient.LPush(redisChannel, redisMsgStr).Err(); err != nil {
-		logrus.Errorf("logic,lpush err:%s", err.Error())
+		logrus.Errorf("logic,lpush err: %s", err.Error())
 		return err
 	}
 	return

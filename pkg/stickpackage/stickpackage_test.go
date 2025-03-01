@@ -112,7 +112,7 @@ func Test_TcpClient(t *testing.T) {
 						fmt.Printf("read msg from tcp ok, version is: %s, length is: %d, msg is: %s\n", scannedPack.Version, scannedPack.Length, scannedPack.Msg)
 					}
 					if scannerPackage.Err() != nil {
-						log.Printf("scannerPackage err:%s", err.Error())
+						log.Printf("scannerPackage err: %s", err.Error())
 						break
 					}
 				}

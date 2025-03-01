@@ -34,7 +34,7 @@ func (c *Connect) serveWs(server *Server, w http.ResponseWriter, r *http.Request
 	conn, err := upGrader.Upgrade(w, r, nil)
 
 	if err != nil {
-		logrus.Errorf("serverWs err:%s", err.Error())
+		logrus.Errorf("serverWs err: %s", err.Error())
 		return
 	}
 	var ch *Channel

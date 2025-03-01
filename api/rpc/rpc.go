@@ -45,7 +45,7 @@ func InitLogicRpcClient() {
 			etcdConfigOption,
 		)
 		if err != nil {
-			logrus.Fatalf("init connect rpc etcd discovery client fail:%s", err.Error())
+			logrus.Fatalf("init connect rpc etcd discovery client fail: %s", err.Error())
 		}
 		LogicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 		RpcLogicObj = new(RpcLogic)

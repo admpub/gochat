@@ -54,7 +54,7 @@ func (r *Room) Push(msg *proto.Msg) {
 	r.rLock.RLock()
 	for ch := r.next; ch != nil; ch = ch.Next {
 		if err := ch.Push(msg); err != nil {
-			logrus.Infof("push msg err:%s", err.Error())
+			logrus.Infof("push msg err: %s", err.Error())
 		}
 	}
 	r.rLock.RUnlock()

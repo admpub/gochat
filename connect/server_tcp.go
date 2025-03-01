@@ -37,14 +37,14 @@ func (c *Connect) InitTcpServer() error {
 	)
 	for _, ipPort := range aTcpAddr {
 		if addr, err = net.ResolveTCPAddr("tcp", ipPort); err != nil {
-			logrus.Errorf("server_tcp ResolveTCPAddr error:%s", err.Error())
+			logrus.Errorf("server_tcp ResolveTCPAddr error: %s", err.Error())
 			return err
 		}
 		if listener, err = net.ListenTCP("tcp", addr); err != nil {
-			logrus.Errorf("net.ListenTCP(tcp, %s),error(%v)", ipPort, err)
+			logrus.Errorf("net.ListenTCP(tcp, %s), error(%v)", ipPort, err)
 			return err
 		}
-		logrus.Infof("start tcp listen at:%s", ipPort)
+		logrus.Infof("start tcp listen at: %s", ipPort)
 		// cpu core num
 		for i := 0; i < cpuNum; i++ {
 			go c.acceptTcp(listener)
@@ -67,17 +67,17 @@ func (c *Connect) acceptTcp(listener *net.TCPListener) {
 		}
 		// set keep alive，client==server ping package check
 		if err = conn.SetKeepAlive(connectTcpConfig.KeepAlive); err != nil {
-			logrus.Errorf("conn.SetKeepAlive() error:%s", err.Error())
+			logrus.Errorf("conn.SetKeepAlive() error: %s", err.Error())
 			return
 		}
 		//set ReceiveBuf
 		if err := conn.SetReadBuffer(connectTcpConfig.ReceiveBuf); err != nil {
-			logrus.Errorf("conn.SetReadBuffer() error:%s", err.Error())
+			logrus.Errorf("conn.SetReadBuffer() error: %s", err.Error())
 			return
 		}
 		//set SendBuf
 		if err := conn.SetWriteBuffer(connectTcpConfig.SendBuf); err != nil {
-			logrus.Errorf("conn.SetWriteBuffer() error:%s", err.Error())
+			logrus.Errorf("conn.SetWriteBuffer() error: %s", err.Error())
 			return
 		}
 		go c.ServeTcp(DefaultServer, conn, r)
@@ -110,12 +110,11 @@ func (c *Connect) readDataFromTcp(s *Server, ch *Channel) {
 		disConnectRequest.UserId = ch.userId
 		s.Bucket(ch.userId).DeleteChannel(ch)
 		if err := s.operator.DisConnect(disConnectRequest); err != nil {
-			logrus.Warnf("DisConnect rpc err :%s", err.Error())
+			logrus.Warnf("DisConnect rpc err: %s", err.Error())
 		}
 		if err := ch.connTcp.Close(); err != nil {
-			logrus.Warnf("DisConnect close tcp conn err :%s", err.Error())
+			logrus.Warnf("DisConnect close tcp conn err: %s", err.Error())
 		}
-		return
 	}()
 	// scanner
 	scannerPackage := bufio.NewScanner(ch.connTcp)
@@ -142,18 +141,18 @@ func (c *Connect) readDataFromTcp(s *Server, ch *Channel) {
 			scannedPack := new(stickpackage.StickPackage)
 			err := scannedPack.Unpack(bytes.NewReader(scannerPackage.Bytes()))
 			if err != nil {
-				logrus.Errorf("scan tcp package err:%s", err.Error())
+				logrus.Errorf("scan tcp package err: %s", err.Error())
 				break
 			}
 			//get a full package
 			var connReq proto.ConnectRequest
-			logrus.Infof("get a tcp message :%s", scannedPack)
+			logrus.Infof("get a tcp message: %s", scannedPack)
 			var rawTcpMsg proto.SendTcp
 			if err := json.Unmarshal([]byte(scannedPack.Msg), &rawTcpMsg); err != nil {
 				logrus.Errorf("tcp message struct %+v", rawTcpMsg)
 				break
 			}
-			logrus.Infof("json unmarshal,raw tcp msg is:%+v", rawTcpMsg)
+			logrus.Infof("json unmarshal,raw tcp msg is: %+v", rawTcpMsg)
 			if rawTcpMsg.AuthToken == "" {
 				logrus.Errorf("tcp s.operator.Connect no authToken")
 				return
@@ -227,9 +226,9 @@ func (c *Connect) writeDataToTcp(s *Server, ch *Channel) {
 			pack.Msg = message.Body
 			pack.Length = pack.GetPackageLength()
 			//send msg
-			logrus.Infof("send tcp msg to conn:%s", pack.String())
+			logrus.Infof("send tcp msg to conn: %s", pack.String())
 			if err := pack.Pack(ch.connTcp); err != nil {
-				logrus.Errorf("connTcp.write message err:%s", err.Error())
+				logrus.Errorf("connTcp.write message err: %s", err.Error())
 				return
 			}
 		case <-ticker.C:

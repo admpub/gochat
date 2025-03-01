@@ -41,7 +41,7 @@ func (p *StickPackage) Unpack(reader io.Reader) error {
 }
 
 func (p *StickPackage) String() string {
-	return fmt.Sprintf("version:%s length:%d msg:%s",
+	return fmt.Sprintf("version: %s length:%d msg: %s",
 		p.Version,
 		p.Length,
 		p.Msg,

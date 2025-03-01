@@ -127,7 +127,7 @@ func (s *Server) readPump(ch *Channel, c *Connect) {
 			return
 		}
 		var connReq *proto.ConnectRequest
-		logrus.Infof("get a message :%s", message)
+		logrus.Infof("get a message: %s", message)
 		if err := json.Unmarshal([]byte(message), &connReq); err != nil {
 			logrus.Errorf("message struct %+v", connReq)
 		}
