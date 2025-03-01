@@ -8,11 +8,12 @@ package connect
 import (
 	"net"
 
-	"github.com/admpub/gochat/proto"
+	"gochat/proto"
+
 	"github.com/gorilla/websocket"
 )
 
-//in fact, Channel it's a user Connect session
+// in fact, Channel it's a user Connect session
 type Channel struct {
 	Room      *Room
 	Next      *Channel

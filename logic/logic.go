@@ -9,7 +9,8 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/admpub/gochat/config"
+	"gochat/config"
+
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )

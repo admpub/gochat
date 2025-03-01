@@ -13,10 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/admpub/gochat/api/rpc"
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/pkg/stickpackage"
-	"github.com/admpub/gochat/proto"
+	"gochat/api/rpc"
+	"gochat/config"
+	"gochat/pkg/stickpackage"
+	"gochat/proto"
+
 	"github.com/sirupsen/logrus"
 )
 

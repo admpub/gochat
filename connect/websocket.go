@@ -8,7 +8,8 @@ package connect
 import (
 	"net/http"
 
-	"github.com/admpub/gochat/config"
+	"gochat/config"
+
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )

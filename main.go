@@ -13,12 +13,12 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/admpub/gochat/api"
-	"github.com/admpub/gochat/connect"
-	"github.com/admpub/gochat/logic"
-	"github.com/admpub/gochat/pkg/exec"
-	"github.com/admpub/gochat/site"
-	"github.com/admpub/gochat/task"
+	"gochat/api"
+	"gochat/connect"
+	"gochat/logic"
+	"gochat/pkg/exec"
+	"gochat/site"
+	"gochat/task"
 )
 
 func main() {

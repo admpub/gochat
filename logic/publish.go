@@ -16,11 +16,6 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/rcrowley/go-metrics"
-	"github.com/sirupsen/logrus"
-	"github.com/smallnest/rpcx/server"
-
-	"github.com/go-redis/redis"
-	"github.com/rcrowley/go-metrics"
 	etcdserverplugin "github.com/rpcxio/rpcx-etcd/serverplugin"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/server"

@@ -15,9 +15,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/admpub/gochat/api/router"
-	"github.com/admpub/gochat/api/rpc"
-	"github.com/admpub/gochat/config"
+	"gochat/api/router"
+	"gochat/api/rpc"
+	"gochat/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -29,7 +30,7 @@ func New() *Chat {
 	return &Chat{}
 }
 
-//api server,Also, you can use gin,echo ... framework wrap
+// api server,Also, you can use gin,echo ... framework wrap
 func (c *Chat) Run() {
 	//init rpc client
 	rpc.InitLogicRpcClient()

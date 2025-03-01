@@ -9,7 +9,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/admpub/gochat/proto"
+	"gochat/proto"
 )
 
 type Bucket struct {

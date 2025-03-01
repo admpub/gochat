@@ -9,8 +9,9 @@ import (
 	"encoding/json"
 	"math/rand"
 
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/proto"
+	"gochat/config"
+	"gochat/proto"
+
 	"github.com/sirupsen/logrus"
 )
 

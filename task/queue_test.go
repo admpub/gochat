@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/tools"
+	"gochat/config"
+	"gochat/tools"
 )
 
 func Test_TestQueue(t *testing.T) {

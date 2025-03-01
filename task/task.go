@@ -8,7 +8,8 @@ package task
 import (
 	"runtime"
 
-	"github.com/admpub/gochat/config"
+	"gochat/config"
+
 	"github.com/sirupsen/logrus"
 )
 

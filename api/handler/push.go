@@ -8,10 +8,11 @@ package handler
 import (
 	"strconv"
 
-	"github.com/admpub/gochat/api/rpc"
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/proto"
-	"github.com/admpub/gochat/tools"
+	"gochat/api/rpc"
+	"gochat/config"
+	"gochat/proto"
+	"gochat/tools"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )

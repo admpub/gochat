@@ -8,8 +8,9 @@ package task
 import (
 	"time"
 
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/tools"
+	"gochat/config"
+	"gochat/tools"
+
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 )

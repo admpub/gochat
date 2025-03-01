@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/proto"
+	"gochat/config"
+	"gochat/proto"
 )
 
 func Test_TestStick(t *testing.T) {
