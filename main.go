@@ -54,5 +54,5 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-quit
-	fmt.Println("Server exiting")
+	fmt.Println("[" + module + "]Server exiting")
 }
