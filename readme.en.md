@@ -1,9 +1,8 @@
-# 🚀 gochat 
-[![Build Status](https://travis-ci.org/LockGit/gochat.svg?branch=master)](https://travis-ci.org/LockGit/gochat)
+# 🚀 gochat
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
 <img src="https://img.shields.io/badge/gochat-im-green">
 <img src="https://img.shields.io/badge/documentation-yes-brightgreen.svg">
 <img src="https://img.shields.io/github/license/LockGit/gochat">
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
 <img src="https://img.shields.io/github/contributors/LockGit/gochat">
 <img src="https://img.shields.io/github/last-commit/LockGit/gochat">
 <img src="https://img.shields.io/github/issues/LockGit/gochat"> 
@@ -15,6 +14,12 @@
 
 ### [中文版本(Chinese version)](readme.md)
 
+### Subscribe
+```
+Share architecture design, research and development, network security, hacker culture, and Internet knowledge
+```
+![](./architecture/wx.jpg)
+
 ### gochat is a lightweight im server implemented using pure go
 * gochat is an instant messaging system based on go. It supports private message messages and room broadcast messages. It communicates with each other through RPC and supports horizontal expansion.
 * Support websocket and TCP access, and support websocket and TCP message interworking in the latest version.
@@ -22,6 +27,15 @@
 * Using redis as the carrier of message storage and delivery is very lightweight, and it can be replaced by heavier Kafka and rabbitmq in actual scenarios.
 * Because of the clear structure of chago, it can run quickly on various platforms.
 * This project provides docker with one click to build all environment dependencies, which is very convenient to install. (if it's an experience, we strongly recommend using docker to build)
+
+### Renew
+* August 6, 2022
+  * Although UI is not very important in this system, it does look awkward. Typescript + react is used to paste a slightly normal front-end UI interface. UI project address: https://github.com/LockGit/gochat-ui
+* May 8, 2022
+  * At present, the version of golang has been upgraded to 1.18. If you do not use docker, choose to compile and install it yourself. Please ensure that your go version meets the requirements
+  * The vendor is also packaged in the warehouse. In addition, the entire project size of the vendor is about 66m, which can be used after git clone. Due to irresistible network factors, it may take a long time
+  * Some package dependent versions have been upgraded. It is not recommended to try to compile this project on a lower version of golang. Try to upgrade to 1.18+
+  * Optimization: dynamically update the service IP address according to the corresponding kV change in the watch etcd to ensure that other layers can perceive the added / removed layers
 
 ### About Websocket && Tcp Support
 ```
@@ -95,9 +109,12 @@ Connect layer:
          Room: (room)
              Channel: (user session)
 ```
+### timing
+![](./architecture/timing.png)
 
 ### Chat room preview
-![](./architecture/gochat.gif)
+Use typescript + react to paste a slightly normal front-end UI. UI project address: https://github.com/LockGit/gochat-ui
+![](./architecture/gochat-new.png)
 
 ### Internal structure of user long connect session
 ![](./architecture/session.png)
@@ -221,6 +238,8 @@ or
 ```
 
 ### Start with a docker
+
+#### Use existing image
 ```
 If you feel that the above steps are too cumbersome, 
 you can use the following docker image to build all the dependencies and quickly start a chat room.
@@ -231,27 +250,32 @@ username  password
 demo        111111
 test        111111
 admin       111111
-1,docker pull lockgit/gochat:latest
+1,docker pull lockgit/gochat:1.18 (version 1.18 is currently used)
 2,git clone git@github.com:LockGit/gochat.git
-3,cd gochat && sh run.sh dev (This step requires a certain time to compile each module and wait patiently. Some systems may not have sh. if an error is reported during execution, change sh run.sh dev to ./ run.sh dev for execution)
-4,visit http://127.0.0.1:8080 to open the chat room
+3,cd gochat && sh run.sh dev 127.0.0.1 (This step requires a certain time to compile each module and wait patiently. Some systems may not have sh. if an error is reported during execution, change sh run.sh dev to ./ run.sh dev 127.0.0.1 for execution)
+4,visit http://127.0.0.1:8080/login; enter username/password to access the chat room
+5,visit http://127.0.0.1:8080 to open the chat room
+```
 
 
+#### Building a new image
+For other platforms, such as arm or m1 chips
+```
 If you want to build an image yourself, 
 you only need to build the Dockerfile under the docker file.
 Docker build -f docker/Dockerfile . -t lockgit/gochat
 then execute:
 1,git clone git@github.com:LockGit/gochat.git
-2,cd gochat && sh run.sh dev (This step requires a certain time to compile each module and wait patiently. Some systems may not have sh. if an error is reported during execution, change sh run.sh dev to ./ run.sh dev for execution)
-3,visit http://127.0.0.1:8080 to open the chat room
+2,cd gochat && sh run.sh dev 127.0.0.1 (This step requires a certain time to compile each module and wait patiently. Some systems may not have sh. if an error is reported during execution, change sh run.sh dev to ./ run.sh dev 127.0.0.1 for execution)
+3,visit http://127.0.0.1:8080/login; enter username/password to access the chat room
+4,visit http://127.0.0.1:8080 to open the chat room
 
-If you want to deploy on personal vps, 
-remember to change the address of socketUrl and apiUrl in site/js/common.js to your ip address of vps.
+If you want to deploy on personal vps, you can execute: sh run.sh dev vps_ip
 And make sure there are no firewall restrictions on the relevant ports on the vps.
 ```
 
 ### Here is an online chat demo site:
-<a href="http://www.gochat.ml:8080" target="_blank">http://www.gochat.ml:8080</a>
+<a href="http://45.77.108.245:8080" target="_blank">http://45.77.108.245:8080</a>
 ```
 Log in with the above user name and password, or register one by yourself.
 if the provide url can't visit one day，please use the docker above to visit it.
@@ -260,6 +284,9 @@ If it is Chrome, you can use several browsers in incognito mode to log in with d
 Then, experience the chat between different accounts and the effect of message delivery.
 (Note: TCP channel is not enabled in this demo)
 ```
+If you want to deploy a similar private IM chat service to the public network experience, 
+you can also register an account on vultr and purchase a VPS host to deploy the IM service experience:
+<a href="https://www.vultr.com/?ref=8981750-8H" target="_blank">https://www.vultr.com/?ref=8981750-8H</a>
 
 ### Follow-up
 ```
@@ -281,5 +308,16 @@ JetBrains has an open source sponsorship program that allows you to apply for th
 Jetbranins officials will ask for the proposal to add their brand logo to the warehouse when giving the license,
 But all this is the principle of users' willingness
 ```
+
+### Support gochat
+```
+Your support is also a kind of affirmation, if you find it helpful, 
+you can also scan the WeChat QR code below to support the author to continue to optimize and improve gochat
+```
+![](./architecture/support.png)
+
 ### License
 gochat is licensed under the MIT License. 
+
+### Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=LockGit/gochat&type=Date)](https://star-history.com/#LockGit/gochat&Date)

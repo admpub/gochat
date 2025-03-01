@@ -9,15 +9,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gochat/config"
+	"gochat/proto"
+	"gochat/tools"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/admpub/gochat/config"
-	"github.com/admpub/gochat/proto"
-	"github.com/admpub/gochat/tools"
 	"github.com/rcrowley/go-metrics"
-	etcdclient "github.com/rpcxio/rpcx-etcd/client"
+	"github.com/rpcxio/libkv/store"
+	etcdV3 "github.com/rpcxio/rpcx-etcd/client"
 	etcdserverplugin "github.com/rpcxio/rpcx-etcd/serverplugin"
 	"github.com/sirupsen/logrus"
 	"github.com/smallnest/rpcx/client"
@@ -31,17 +32,25 @@ type RpcConnect struct {
 }
 
 func (c *Connect) InitLogicRpcClient() (err error) {
+	etcdConfigOption := &store.Config{
+		ClientTLS:         nil,
+		TLS:               nil,
+		ConnectionTimeout: time.Duration(config.Conf.Common.CommonEtcd.ConnectionTimeout) * time.Second,
+		Bucket:            "",
+		PersistConnection: true,
+		Username:          config.Conf.Common.CommonEtcd.UserName,
+		Password:          config.Conf.Common.CommonEtcd.Password,
+	}
 	once.Do(func() {
-		var d client.ServiceDiscovery
-		d, err = etcdclient.NewEtcdV3Discovery(
+		d, e := etcdV3.NewEtcdV3Discovery(
 			config.Conf.Common.CommonEtcd.BasePath,
 			config.Conf.Common.CommonEtcd.ServerPathLogic,
 			[]string{config.Conf.Common.CommonEtcd.Host},
-			config.Conf.Common.CommonEtcd.AllowKeyNotFound,
-			nil,
+			true,
+			etcdConfigOption,
 		)
-		if err != nil {
-			return
+		if e != nil {
+			logrus.Fatalf("init connect rpc etcd discovery client fail:%s", e.Error())
 		}
 		logicRpcClient = client.NewXClient(config.Conf.Common.CommonEtcd.ServerPathLogic, client.Failtry, client.RandomSelect, d, client.DefaultOption)
 	})
@@ -159,7 +168,7 @@ func (c *Connect) createConnectWebsocktsRpcServer(network string, addr string) {
 	addRegistryPlugin(s, network, addr)
 	//config.Conf.Connect.ConnectTcp.ServerId
 	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", config.Conf.Connect.ConnectWebsocket.ServerId))
-	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), c.ServerId)
+	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("serverId=%s&serverType=ws", c.ServerId))
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
 	})
@@ -170,7 +179,7 @@ func (c *Connect) createConnectTcpRpcServer(network string, addr string) {
 	s := server.NewServer()
 	addRegistryPlugin(s, network, addr)
 	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", config.Conf.Connect.ConnectTcp.ServerId))
-	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", c.ServerId))
+	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("serverId=%s&serverType=tcp", c.ServerId))
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
 	})

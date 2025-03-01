@@ -1,12 +1,11 @@
-# 🚀 gochat 
-[![Build Status](https://travis-ci.org/LockGit/gochat.svg?branch=master)](https://travis-ci.org/LockGit/gochat)
+# 🚀 gochat
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
 <img src="https://img.shields.io/badge/gochat-im-green">
 <img src="https://img.shields.io/badge/documentation-yes-brightgreen.svg">
 <img src="https://img.shields.io/github/license/LockGit/gochat">
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LockGit/gochat/issues)
 <img src="https://img.shields.io/github/contributors/LockGit/gochat">
 <img src="https://img.shields.io/github/last-commit/LockGit/gochat">
-<img src="https://img.shields.io/github/issues/LockGit/gochat"> 
+<img src="https://img.shields.io/github/issues/LockGit/gochat">
 <img src="https://img.shields.io/github/forks/LockGit/gochat">
 <img src="https://img.shields.io/github/stars/LockGit/gochat">
 <img src="https://img.shields.io/github/repo-size/LockGit/gochat">
@@ -14,7 +13,13 @@
 
 ### [English version(英文版本)](readme.en.md)
 
-### gochat是一个使用纯go实现的轻量级im系统 
+### 持续关注
+```
+分享架构设计，编程语言，网络安全，黑客文化，互联网见闻
+```
+![](./architecture/wx.jpg)
+
+### gochat是一个使用纯go实现的轻量级im系统
 * gochat为纯go实现的即时通讯系统,支持私信消息与房间广播消息,各层之间通过rpc通讯,支持水平扩展。
 * 支持websocket,tcp接入,并且在最新的版本中已经支持websocket,tcp消息互通。
 * 各层之间基于etcd服务发现,在扩容部署时将会方便很多。
@@ -22,7 +27,16 @@
 * 由于go的交叉编译特性,编译后可以快速在各个平台上运行,gochat架构及目录结构清晰。
 * 本项目贴心的提供了docker一键构建所有环境依赖,安装起来十分便捷。(如果是体验，强烈建议使用docker构建)
 
-### Websocket && Tcp消息互通 
+### 更新
+* 2022年08月06日
+  * 虽然UI在本系统中并不是很重要，但看着确实别扭，用TypeScript+React糊了一个稍微看上去正常一些的前端UI界面，UI项目地址：https://github.com/LockGit/gochat-ui
+* 2022年05月08日
+  * 目前golang版本升级到了1.18，如果未使用docker，选择自己编译安装请确保自己的go版本是否符合要求
+  * vendor也打包到了仓库里，加上vendor整个项目大小约66M，理论git clone后就就可以使用，由于不可抗拒的网络因素，可能需要较长时间
+  * 升级了一些包依赖版本，不建议在低版本的golang上尝试编译本项目，尽量升级到1.18+
+  * 优化：watch etcd的中对应的kv变化，动态更新服务ip地址，确保新增/移除各层后其他层能够感知
+
+### Websocket && Tcp消息互通
 ```
 关于最新版本支持支持websocket,tcp消息互通部分的说明：
 tcp消息投递与接收测试代码在本项目pkg/stickpackage目录中的:stickpackage_test.go文件中的Test_TcpClient方法
@@ -50,13 +64,13 @@ authToken为进行tcp链接时的认证token，这个token是用户标识，在w
 
 
 ### 架构设计
- ![](./architecture/gochat.png)
+![](./architecture/gochat.png)
 
 ### 服务发现
 ![](./architecture/gochat_discovery.png)
 
 
-### 消息投递 
+### 消息投递
 ![](./architecture/single_send.png)
 ```
 消息发送必须在登录状态下,如上图,用户A向用户B发送了一条消息。那么经历了如下历程：
@@ -87,8 +101,12 @@ connect层:
             channel: (用户会话)
 ```
 
+### 时序图
+![](./architecture/timing.png)
+
 ### 聊天室预览
-![](./architecture/gochat.gif)
+用TypeScript + React 糊了一个稍微看上去正常一些的前端UI，UI项目地址：https://github.com/LockGit/gochat-ui
+![](./architecture/gochat-new.png)
 
 ### 用户长链接会话内部结构
 ![](./architecture/session.png)
@@ -166,16 +184,16 @@ cd db && sqlite3 gochat.sqlite3
 
 ```sqlite
 create table user(
-  `id` INTEGER PRIMARY KEY autoincrement , -- '用户id'
-  `user_name` varchar(20) not null UNIQUE default '', -- '用户名'
-  `password` char(40) not null default '', -- '密码'
-  `create_time` timestamp NOT NULL DEFAULT current_timestamp -- '创建时间'
+                   `id` INTEGER PRIMARY KEY autoincrement , -- '用户id'
+                   `user_name` varchar(20) not null UNIQUE default '', -- '用户名'
+                   `password` char(40) not null default '', -- '密码'
+                   `create_time` timestamp NOT NULL DEFAULT current_timestamp -- '创建时间'
 );
 ```
 
 ### 安装
 在启动各层之前,请确保已经启动了etcd与redis服务以及以上数据库表,
-并确保7000, 7070, 8080端口没有被占用。（测试tcp端口使用7001，7002，如果要使用tcp,那么防火墙也需要放行这两个端口）
+并确保【7000, 7070, 8080】端口没有被占用。（测试tcp端口使用7001，7002，如果要使用tcp,那么防火墙也需要放行这两个端口）
 然后按照以下顺序启动各层,如果要扩容connect层,
 请确保connect层配置中各个serverId不一样!
 
@@ -221,7 +239,10 @@ create table user(
   ./gochat.bin -module site
   ```
 
-### 使用docker一键启动 
+### 使用docker一键启动
+
+#### 使用现有镜像
+amd x86架构
 ```
 如果你觉得以上步骤过于繁琐,你可以使用以下docker镜像构建所有依赖环境并快速启动一个聊天室
 执行docker相关步骤的时候,会到hub.docker.com拉取相关镜像,可能需要翻墙,具体看你的网络。
@@ -232,30 +253,37 @@ create table user(
 demo  111111
 test  111111
 admin 111111
-1,docker pull lockgit/gochat:latest
+1,docker pull lockgit/gochat:1.18 (目前使用的是1.18版本)
 2,git clone git@github.com:LockGit/gochat.git
-3,cd gochat && sh run.sh dev (该步骤需要一定时间编译各个模块，耐心等待即可,部分系统可能没有sh,如果执行报错,把sh run.sh dev改为./run.sh dev执行）
-4,访问 http://127.0.0.1:8080 开启聊天室
+3,cd gochat && sh run.sh dev 127.0.0.1 (该步骤需要一定时间编译各个模块，耐心等待即可,部分系统可能没有sh,如果执行报错,把sh run.sh dev改为./run.sh dev 127.0.0.1执行）
+4,访问 http://127.0.0.1:8080/login 输入用户名/密码以访问聊天室
+5,访问 http://127.0.0.1:8080 开启聊天室
+```
 
-
+#### 构建新镜像
+```
 如果你想自己构建一个镜像,那么只需要build docker文件下的Dockerfile
-docker build -f docker/Dockerfile . -t lockgit/gochat
+make build TAG=1.18(这里的1.18就是run.sh中的镜像用到的版本）
 上面build过程可能需要翻墙且需要一定时间，完成后执行:
 1,git clone git@github.com:LockGit/gochat.git
-2,cd gochat && sh run.sh dev (该步骤需要一定时间编译各个模块，耐心等待即可,部分系统可能没有sh,如果执行报错,把sh run.sh dev改为./run.sh dev执行）
-3,访问 http://127.0.0.1:8080 开启聊天室
+2,cd gochat && sh run.sh dev 127.0.0.1 (该步骤需要一定时间编译各个模块，耐心等待即可,部分系统可能没有sh,如果执行报错,把sh run.sh dev改为./run.sh dev 127.0.0.1执行）
+3,访问 http://127.0.0.1:8080/login 输入用户名/密码以访问聊天室
+4,访问 http://127.0.0.1:8080 开启聊天室
 
-如果你要部署在个人vps上,记得修改site/js/common.js中socketUrl与apiUrl的地址为你的vps的ip地址,
+如果你要部署在个人vps等公网上，让别人也能访问使用，执行 （sh run.sh dev 需要暴露的公网ip地址）即可
 并确保vps上没有针对相关端口的防火墙限制。
 ```
 
 ### 这里提供一个在线聊天demo站点：
-<a href="http://www.gochat.ml:8080" target="_blank">http://www.gochat.ml:8080</a>
+<a href="http://45.77.108.245:8080" target="_blank">http://45.77.108.245:8080</a>
 ```
 用以上用户名密码登录即可,也可以自己注册一个。如果无法访问了，请使用以上docker在本地构建体验。
 可用不同的账号在不同的浏览器登录,如果是Chrome,可用以隐身模式多启动几个浏览器分别以不同账号登录,
 然后,体验不同账号之间聊天以及消息投递效果。(注:本demo未开启tcp的通道)
 ```
+如果想部署类似的私人im聊天服务到公网体验，也可在vultr上注册账号购买一个vps主机，部署im服务体验：
+<a href="https://www.vultr.com/?ref=8981750-8H" target="_blank">https://www.vultr.com/?ref=8981750-8H</a>
+
 
 ### 相关问题解答
 ```
@@ -285,6 +313,12 @@ jetbrains有一项开源赞助计划，可以通过开源项目免费申请jetbr
 jetbranins官方在赠送license的时候会请求提议加入他们的品牌logo推广放入到仓库中,
 不过这一切都是用户自愿的原则
 ```
+
+### Support gochat
+```
+您的支持也是一种肯定，如果您觉得有帮助也可以通过扫描下面的微信二维码支持作者继续优化和完善gochat
+```
+![](./architecture/support.png)
 
 ### License
 gochat is licensed under the MIT License.

@@ -131,7 +131,9 @@ type CommonEtcd struct {
 	BasePath          string `mapstructure:"basePath"`
 	ServerPathLogic   string `mapstructure:"serverPathLogic"`
 	ServerPathConnect string `mapstructure:"serverPathConnect"`
-	AllowKeyNotFound  bool   `mapstructure:"allowKeyNotFound"`
+	UserName          string `mapstructure:"userName"`
+	Password          string `mapstructure:"password"`
+	ConnectionTimeout int    `mapstructure:"connectionTimeout"`
 }
 
 type CommonRedis struct {
