@@ -70,7 +70,7 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 			}
 			w, err := ch.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
-				logrus.Warn(" ch.conn.NextWriter err :%s  ", err.Error())
+				logrus.Warnf("ch.conn.NextWriter err: %s", err.Error())
 				return
 			}
 			logrus.Infof("message write body:%s", message.Body)
