@@ -58,11 +58,10 @@ func (r *Room) Push(msg *proto.Msg) {
 		}
 	}
 	r.rLock.RUnlock()
-	return
 }
 
 func (r *Room) DeleteChannel(ch *Channel) bool {
-	r.rLock.RLock()
+	r.rLock.Lock()
 	if ch.Next != nil {
 		//if not footer
 		ch.Next.Prev = ch.Prev
@@ -78,6 +77,6 @@ func (r *Room) DeleteChannel(ch *Channel) bool {
 	if r.OnlineCount <= 0 {
 		r.drop = true
 	}
-	r.rLock.RUnlock()
+	r.rLock.Unlock()
 	return r.drop
 }

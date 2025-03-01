@@ -19,7 +19,7 @@ type Bucket struct {
 	rooms         map[int]*Room // bucket room channels
 	routines      []chan *proto.PushRoomMsgRequest
 	routinesNum   uint64
-	broadcast     chan []byte
+	//broadcast     chan []byte
 }
 
 type BucketOptions struct {
@@ -58,7 +58,7 @@ func (b *Bucket) PushRoom(ch chan *proto.PushRoomMsgRequest) {
 
 func (b *Bucket) Room(rid int) (room *Room) {
 	b.cLock.RLock()
-	room, _ = b.rooms[rid]
+	room = b.rooms[rid]
 	b.cLock.RUnlock()
 	return
 }
@@ -99,7 +99,7 @@ func (b *Bucket) DeleteChannel(ch *Channel) {
 	}
 	if room != nil && room.DeleteChannel(ch) {
 		// if room empty delete,will mark room.drop is true
-		if room.drop == true {
+		if room.drop {
 			delete(b.rooms, room.Id)
 		}
 	}
