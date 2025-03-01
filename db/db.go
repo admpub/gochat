@@ -26,7 +26,7 @@ func init() {
 
 func initDB(dbName string) {
 	var e error
-	// if prod env , you should change mysql driver for yourself !!!
+	// if prod env, you should change mysql driver for yourself!!!
 	realPath, _ := filepath.Abs("./")
 	configFilePath := realPath + "/db/gochat.sqlite3"
 	syncLock.Lock()

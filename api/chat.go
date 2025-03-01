@@ -37,7 +37,7 @@ func (c *Chat) Run() {
 
 	r := router.Register()
 	runMode := config.GetGinRunMode()
-	logrus.Info("server start , now run mode is ", runMode)
+	logrus.Info("server start, now run mode is ", runMode)
 	gin.SetMode(runMode)
 	apiConfig := config.Conf.Api
 	port := apiConfig.ApiBase.ListenPort
@@ -53,7 +53,7 @@ func (c *Chat) Run() {
 			logrus.Errorf("start listen : %s\n", err)
 		}
 	}()
-	// if have two quit signal , this signal will priority capture ,also can graceful shutdown
+	// if have two quit signal, this signal will priority capture, also can graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-quit

@@ -59,14 +59,14 @@ func (c *Connect) Run() {
 		BroadcastSize:   512,
 	})
 	c.ServerId = fmt.Sprintf("%s-%s", "ws", uuid.New().String())
-	//init Connect layer rpc server ,task layer will call this
+	//init Connect layer rpc server, task layer will call this
 	if err := c.InitConnectWebsocketRpcServer(); err != nil {
 		logrus.Panicf("InitConnectWebsocketRpcServer Fatal error: %s \n", err.Error())
 	}
 
 	//start Connect layer server handler persistent connection
 	if err := c.InitWebsocket(); err != nil {
-		logrus.Panicf("Connect layer InitWebsocket() error:  %s \n", err.Error())
+		logrus.Panicf("Connect layer InitWebsocket() error: %s \n", err.Error())
 	}
 }
 
@@ -105,12 +105,12 @@ func (c *Connect) RunTcp() {
 	//	http.ListenAndServe("0.0.0.0:9000", nil)
 	//}()
 	c.ServerId = fmt.Sprintf("%s-%s", "tcp", uuid.New().String())
-	//init Connect layer rpc server ,task layer will call this
+	//init Connect layer rpc server, task layer will call this
 	if err := c.InitConnectTcpRpcServer(); err != nil {
 		logrus.Panicf("InitConnectWebsocketRpcServer Fatal error: %s \n", err.Error())
 	}
 	//start Connect layer server handler persistent connection by tcp
 	if err := c.InitTcpServer(); err != nil {
-		logrus.Panicf("Connect layerInitTcpServer() error:%s\n ", err.Error())
+		logrus.Panicf("Connect layerInitTcpServer() error: %s\n ", err.Error())
 	}
 }

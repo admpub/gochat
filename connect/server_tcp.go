@@ -170,13 +170,13 @@ func (c *Connect) readDataFromTcp(s *Server, ch *Channel) {
 				//connReq.ServerId = config.Conf.Connect.ConnectTcp.ServerId
 				connReq.ServerId = c.ServerId
 				userId, err := s.operator.Connect(&connReq)
-				logrus.Infof("tcp s.operator.Connect userId is :%d", userId)
+				logrus.Infof("tcp s.operator.Connect userId is: %d", userId)
 				if err != nil {
 					logrus.Errorf("tcp s.operator.Connect error %s", err.Error())
 					return
 				}
 				if userId == 0 {
-					logrus.Error("tcp Invalid AuthToken ,userId empty")
+					logrus.Error("tcp Invalid AuthToken, userId empty")
 					return
 				}
 				b := s.Bucket(userId)
@@ -197,11 +197,11 @@ func (c *Connect) readDataFromTcp(s *Server, ch *Channel) {
 					Op:           config.OpRoomSend,
 				}
 				code, msg := rpc.RpcLogicObj.PushRoom(req)
-				logrus.Infof("tcp conn push msg to room,err code is:%d,err msg is:%s", code, msg)
+				logrus.Infof("tcp conn push msg to room,err code is: %d, err msg is: %s", code, msg)
 			}
 		}
 		if err := scannerPackage.Err(); err != nil {
-			logrus.Errorf("tcp get a err package:%s", err.Error())
+			logrus.Errorf("tcp get a err package: %s", err.Error())
 			return
 		}
 	}
@@ -213,7 +213,6 @@ func (c *Connect) writeDataToTcp(s *Server, ch *Channel) {
 	defer func() {
 		ticker.Stop()
 		_ = ch.connTcp.Close()
-		return
 	}()
 	pack := stickpackage.StickPackage{
 		Version: stickpackage.VersionContent,
@@ -235,7 +234,7 @@ func (c *Connect) writeDataToTcp(s *Server, ch *Channel) {
 			}
 		case <-ticker.C:
 			logrus.Infof("connTcp.ping message,send")
-			//send a ping msg ,if error , return
+			//send a ping msg, if error, return
 			pack.Msg = []byte("ping msg")
 			pack.Length = pack.GetPackageLength()
 			if err := pack.Pack(ch.connTcp); err != nil {

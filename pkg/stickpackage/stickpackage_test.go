@@ -27,7 +27,7 @@ func Test_TestStick(t *testing.T) {
 	pack.Length = pack.GetPackageLength()
 
 	buf := new(bytes.Buffer)
-	//test package , BigEndian
+	//test package, BigEndian
 	_ = pack.Pack(buf)
 	_ = pack.Pack(buf)
 	_ = pack.Pack(buf)
@@ -106,10 +106,10 @@ func Test_TcpClient(t *testing.T) {
 						scannedPack := new(StickPackage)
 						err := scannedPack.Unpack(bytes.NewReader(scannerPackage.Bytes()))
 						if err != nil {
-							log.Printf("unpack msg err:%s", err.Error())
+							log.Printf("unpack msg err: %s", err.Error())
 							break
 						}
-						fmt.Println(fmt.Sprintf("read msg from tcp ok,version is:%s,length is:%d,msg is:%s", scannedPack.Version, scannedPack.Length, scannedPack.Msg))
+						fmt.Printf("read msg from tcp ok, version is: %s, length is: %d, msg is: %s\n", scannedPack.Version, scannedPack.Length, scannedPack.Msg)
 					}
 					if scannerPackage.Err() != nil {
 						log.Printf("scannerPackage err:%s", err.Error())
@@ -144,10 +144,10 @@ func Test_TcpClient(t *testing.T) {
 			//test package, BigEndian
 			_ = pack.Pack(conn) //写入要发送的消息
 		}
-		fmt.Println("time wait , you can remove the code!")
+		fmt.Println("time wait, you can remove the code!")
 		time.Sleep(10 * time.Second)
 		msg := &proto.SendTcp{
-			Msg:          "from tcp client,time is:" + time.Now().Format("2006-01-02 15:04:05"),
+			Msg:          "from tcp client, time is: " + time.Now().Format("2006-01-02 15:04:05"),
 			FromUserId:   fromUserId,
 			FromUserName: "I am Tcp msg",
 			RoomId:       roomId,
@@ -165,6 +165,6 @@ func Test_TcpClient(t *testing.T) {
 		//test package, BigEndian
 		_ = pack.Pack(conn) //写入要发送的消息
 		i++
-		fmt.Println(fmt.Sprintf("第%d次send msg to tcp server", i))
+		fmt.Printf("第 %d 次 send msg to tcp server\n", i)
 	}
 }
