@@ -45,7 +45,7 @@ func main() {
 		withServiceCmd := other
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
-		go exec.StartAll(ctx, withServiceCmd)
+		exec.StartAll(ctx, withServiceCmd)
 	default:
 		fmt.Println("exiting, module param error!")
 		return
