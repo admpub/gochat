@@ -12,6 +12,7 @@ import (
 	"gochat/config"
 	"gochat/proto"
 	"gochat/tools"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -190,7 +191,20 @@ func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 	reply := &proto.SuccessReply{}
 	connectRpc, err := RClient.GetRpcClientByServerId(serverId)
 	if err != nil {
-		logrus.Infof("get rpc client err %v", err)
+		logrus.Infof("(serverId:%s) get rpc client err %v", serverId, err)
+		userKey := config.RedisPrefix + strconv.Itoa(userId)
+		oldServerId := serverId
+		serverId = RedisClient.Get(userKey).Val()
+		if len(serverId) == 0 {
+			logrus.Warnf("(userId:%d) this user has been offline", userId)
+			return
+		}
+		logrus.Infof("switch serverId %q to %q", oldServerId, serverId)
+		connectRpc, err = RClient.GetRpcClientByServerId(serverId)
+		if err != nil {
+			logrus.Infof("(serverId:%s) get rpc client err %v", serverId, err)
+			return
+		}
 	}
 	err = connectRpc.Call(context.Background(), "PushSingleMsg", pushMsgReq, reply)
 	if err != nil {

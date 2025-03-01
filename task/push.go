@@ -37,8 +37,12 @@ func (task *Task) GoPush() {
 
 func (task *Task) processSinglePush(ch chan *PushParams) {
 	var arg *PushParams
+	var ok bool
 	for {
-		arg = <-ch
+		arg, ok = <-ch
+		if !ok {
+			return
+		}
 		//@todo when arg.ServerId server is down, user could be reconnect other serverId but msg in queue no consume
 		task.pushSingleToConnect(arg.ServerId, arg.UserId, arg.Msg)
 	}
