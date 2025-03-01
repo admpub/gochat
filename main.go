@@ -6,6 +6,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -43,7 +44,9 @@ func main() {
 		site.New().Run()
 	case "all":
 		withServiceCmd, _ := strconv.ParseBool(other)
-		exec.StartAll(withServiceCmd)
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		exec.StartAll(ctx, withServiceCmd)
 	default:
 		fmt.Println("exiting, module param error!")
 		return

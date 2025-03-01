@@ -1,13 +1,14 @@
 package exec
 
 import (
+	"context"
 	"os"
 	"time"
 
 	"github.com/webx-top/com"
 )
 
-func StartAll(withServiceCmd bool) error {
+func StartAll(ctx context.Context, withServiceCmd bool) error {
 	bin := os.Args[0]
 	serviceCmds := []string{
 		`etcd`,
@@ -22,12 +23,12 @@ func StartAll(withServiceCmd bool) error {
 	}
 	if withServiceCmd {
 		for _, cmd := range serviceCmds {
-			com.RunCmdStrWithWriter(cmd)
+			com.RunCmdStrWriterWithContext(ctx, cmd)
 		}
 		time.Sleep(5 * time.Second)
 	}
 	for _, cmd := range moduleCmds {
-		com.RunCmdStrWithWriter(cmd)
+		com.RunCmdStrWriterWithContext(ctx, cmd)
 	}
 	return nil
 }
