@@ -58,7 +58,7 @@ func (rc *RpcConnectClient) GetRpcClientByServerId(serverId string) (c client.XC
 }
 
 func (rc *RpcConnectClient) GetAllConnectTypeRpcClient() (rpcClientList []client.XClient) {
-	for serverId, _ := range rc.ServerInsMap {
+	for serverId := range rc.ServerInsMap {
 		c, err := rc.GetRpcClientByServerId(serverId)
 		if err != nil {
 			logrus.Infof("GetAllConnectTypeRpcClient err: %s", err.Error())
@@ -178,7 +178,7 @@ func (task *Task) watchServicesChange(d client.ServiceDiscovery) {
 }
 
 func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
-	logrus.Infof("pushSingleToConnect Body %s", string(msg))
+	logrus.Debugf("pushSingleToConnect Body %s", string(msg))
 	pushMsgReq := &proto.PushMsgRequest{
 		UserId: userId,
 		Msg: proto.Msg{
@@ -210,7 +210,7 @@ func (task *Task) pushSingleToConnect(serverId string, userId int, msg []byte) {
 	if err != nil {
 		logrus.Infof("pushSingleToConnect Call err %v", err)
 	}
-	logrus.Infof("reply %s", reply.Msg)
+	logrus.Debugf("reply %s", reply.Msg)
 }
 
 func (task *Task) broadcastRoomToConnect(roomId int, msg []byte) {
@@ -226,9 +226,9 @@ func (task *Task) broadcastRoomToConnect(roomId int, msg []byte) {
 	reply := &proto.SuccessReply{}
 	rpcList := RClient.GetAllConnectTypeRpcClient()
 	for _, rpc := range rpcList {
-		logrus.Infof("broadcastRoomToConnect rpc  %v", rpc)
+		logrus.Debugf("broadcastRoomToConnect rpc  %v", rpc)
 		rpc.Call(context.Background(), "PushRoomMsg", pushRoomMsgReq, reply)
-		logrus.Infof("reply %s", reply.Msg)
+		logrus.Debugf("reply %s", reply.Msg)
 	}
 }
 
@@ -255,9 +255,9 @@ func (task *Task) broadcastRoomCountToConnect(roomId, count int) {
 	reply := &proto.SuccessReply{}
 	rpcList := RClient.GetAllConnectTypeRpcClient()
 	for _, rpc := range rpcList {
-		logrus.Infof("broadcastRoomCountToConnect rpc %v", rpc)
+		logrus.Debugf("broadcastRoomCountToConnect rpc %v", rpc)
 		rpc.Call(context.Background(), "PushRoomCount", pushRoomMsgReq, reply)
-		logrus.Infof("reply %s", reply.Msg)
+		logrus.Debugf("reply %s", reply.Msg)
 	}
 }
 
@@ -286,8 +286,8 @@ func (task *Task) broadcastRoomInfoToConnect(roomId int, roomUserInfo map[string
 	reply := &proto.SuccessReply{}
 	rpcList := RClient.GetAllConnectTypeRpcClient()
 	for _, rpc := range rpcList {
-		logrus.Infof("broadcastRoomInfoToConnect rpc %v", rpc)
+		logrus.Debugf("broadcastRoomInfoToConnect rpc %v", rpc)
 		rpc.Call(context.Background(), "PushRoomInfo", pushRoomMsgReq, reply)
-		logrus.Infof("broadcastRoomInfoToConnect rpc reply %v", reply)
+		logrus.Debugf("broadcastRoomInfoToConnect rpc reply %v", reply)
 	}
 }

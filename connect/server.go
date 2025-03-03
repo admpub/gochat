@@ -73,7 +73,7 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 				logrus.Warnf("ch.conn.NextWriter err: %s", err.Error())
 				return
 			}
-			logrus.Infof("message write body: %s", message.Body)
+			logrus.Debugf("message write body: %s", message.Body)
 			w.Write(message.Body)
 			if err := w.Close(); err != nil {
 				return
@@ -81,7 +81,7 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 		case <-ticker.C:
 			//heartbeat，if ping error will exit and close current websocket conn
 			ch.conn.SetWriteDeadline(time.Now().Add(s.Options.WriteWait))
-			logrus.Infof("websocket.PingMessage: %v", websocket.PingMessage)
+			logrus.Debugf("websocket.PingMessage: %v", websocket.PingMessage)
 			if err := ch.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
@@ -91,19 +91,19 @@ func (s *Server) writePump(ch *Channel, c *Connect) {
 
 func (s *Server) readPump(ch *Channel, c *Connect) {
 	defer func() {
-		logrus.Infof("start exec disConnect ...")
+		logrus.Debugf("start exec disconnect ...")
 		if ch.Room == nil || ch.userId == 0 {
-			logrus.Infof("roomId and userId eq 0")
+			logrus.Debugf("roomId and userId eq 0")
 			ch.conn.Close()
 			return
 		}
-		logrus.Infof("exec disConnect ...")
+		logrus.Debugf("exec disconnect ...")
 		disConnectRequest := new(proto.DisConnectRequest)
 		disConnectRequest.RoomId = ch.Room.Id
 		disConnectRequest.UserId = ch.userId
 		s.Bucket(ch.userId).DeleteChannel(ch)
 		if err := s.operator.DisConnect(disConnectRequest); err != nil {
-			logrus.Warnf("DisConnect err: %s", err.Error())
+			logrus.Warnf("Disconnect err: %s", err.Error())
 		}
 		ch.conn.Close()
 	}()
@@ -127,7 +127,7 @@ func (s *Server) readPump(ch *Channel, c *Connect) {
 			return
 		}
 		var connReq *proto.ConnectRequest
-		logrus.Infof("get a message: %s", message)
+		logrus.Debugf("get a message: %s", message)
 		if err := json.Unmarshal([]byte(message), &connReq); err != nil {
 			logrus.Errorf("message struct %+v", connReq)
 		}
@@ -145,7 +145,7 @@ func (s *Server) readPump(ch *Channel, c *Connect) {
 			logrus.Error("Invalid AuthToken, userId empty")
 			return
 		}
-		logrus.Infof("websocket rpc call return userId: %d, RoomId: %d", userId, connReq.RoomId)
+		logrus.Debugf("websocket rpc call return userId: %d, RoomId: %d", userId, connReq.RoomId)
 		b := s.Bucket(userId)
 		//insert into a bucket
 		err = b.Put(userId, connReq.RoomId, ch)

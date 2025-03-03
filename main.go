@@ -28,18 +28,34 @@ func main() {
 	flag.BoolVar(&other, "other", false, "other parameter")
 	flag.Parse()
 	fmt.Printf("start run %s module\n", module)
+
+	/*
+	          [connect] (websocket or tcp)
+	         /                                \
+	   [site]                                  [task]<RPC> (send message)
+	         \                                /
+	   	      [api]<RPC> —— [logic]<Queue> ——
+
+	*/
 	switch module {
-	case "logic":
-		logic.New().Run()
-	case "connect_websocket":
+
+	// connect begin
+	// 出入房间
+
+	case "connect_websocket": // Websocket+RPC Server
 		go connect.New().Run()
-	case "connect_tcp":
+	case "connect_tcp": // TCP+RPC Server
 		connect.New().RunTcp()
-	case "task":
+
+	// connect end
+
+	case "task": // (Redis)Queue Consumer + (connect)RPC Caller
 		task.New().Run()
-	case "api":
+	case "logic": // RPC Server + (Redis)Queue Producer
+		logic.New().Run()
+	case "api": // API Server + (logic)RPC Caller
 		api.New().Run()
-	case "site":
+	case "site": // Frontend static file server ( Client: API Caller + (websocket/tcp)Connect Caller )
 		go site.New().Run()
 	case "all":
 		withServiceCmd := other

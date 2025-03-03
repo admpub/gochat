@@ -173,8 +173,6 @@ func (rpc *RpcConnectPush) PushRoomInfo(ctx context.Context, pushRoomMsgReq *pro
 func (c *Connect) createConnectWebsocktsRpcServer(network string, addr string) {
 	s := server.NewServer()
 	addRegistryPlugin(s, network, addr)
-	//config.Conf.Connect.ConnectTcp.ServerId
-	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", config.Conf.Connect.ConnectWebsocket.ServerId))
 	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("serverId=%s&serverType=ws", c.ServerId))
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
@@ -185,7 +183,6 @@ func (c *Connect) createConnectWebsocktsRpcServer(network string, addr string) {
 func (c *Connect) createConnectTcpRpcServer(network string, addr string) {
 	s := server.NewServer()
 	addRegistryPlugin(s, network, addr)
-	//s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("%s", config.Conf.Connect.ConnectTcp.ServerId))
 	s.RegisterName(config.Conf.Common.CommonEtcd.ServerPathConnect, new(RpcConnectPush), fmt.Sprintf("serverId=%s&serverType=tcp", c.ServerId))
 	s.RegisterOnShutdown(func(s *server.Server) {
 		s.UnregisterAll()
