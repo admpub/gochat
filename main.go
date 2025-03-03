@@ -29,14 +29,12 @@ func main() {
 	flag.Parse()
 	fmt.Printf("start run %s module\n", module)
 
-	/*
-	          [connect] (websocket or tcp)
-	         /                                \
-	   [site]                                  [task]<RPC> (send message)
-	         \                                /
-	   	      [api]<RPC> —— [logic]<Queue> ——
+	//           [connect] (websocket or tcp)
+	//          /                                \
+	//    [site]                                  [task]<RPC> (send message)
+	//          \                                /
+	//    	      [api]<RPC> —— [logic]<Queue> ——
 
-	*/
 	switch module {
 
 	// -------------------- connect begin
