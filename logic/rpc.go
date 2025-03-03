@@ -350,7 +350,7 @@ func (rpc *RpcLogic) DisConnect(ctx context.Context, args *proto.DisConnectReque
 			logrus.Warnf("HDel getRoomUserKey err: %s", err)
 		}
 	}
-	//below code can optimize send a signal to queue,another process get a signal from queue,then push event to websocket
+	//below code can optimize send a signal to queue, another process get a signal from queue, then push event to websocket
 	roomUserInfo, err := RedisClient.HGetAll(roomUserKey).Result()
 	if err != nil {
 		logrus.Warnf("RedisCli HGetAll roomUserInfo key: %s, err: %s", roomUserKey, err)

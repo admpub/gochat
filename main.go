@@ -39,15 +39,16 @@ func main() {
 	*/
 	switch module {
 
-	// connect begin
-	// 出入房间
+	// -------------------- connect begin
+	// 含房间管理逻辑，比如：出入房间
+	// 将 authToken 通过 RPC 传递给 logic 查询 userId。通过 userId 来核实用户登录状态
 
 	case "connect_websocket": // Websocket+RPC Server
 		go connect.New().Run()
 	case "connect_tcp": // TCP+RPC Server
 		connect.New().RunTcp()
 
-	// connect end
+	// -------------------- connect end
 
 	case "task": // (Redis)Queue Consumer + (connect)RPC Caller
 		task.New().Run()

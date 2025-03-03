@@ -32,14 +32,13 @@ func (c *Connect) serveWs(server *Server, w http.ResponseWriter, r *http.Request
 	upGrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	conn, err := upGrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		logrus.Errorf("serverWs err: %s", err.Error())
 		return
 	}
-	var ch *Channel
+
 	//default broadcast size eq 512
-	ch = NewChannel(server.Options.BroadcastSize)
+	ch := NewChannel(server.Options.BroadcastSize)
 	ch.conn = conn
 	//send data to websocket conn
 	go server.writePump(ch, c)
