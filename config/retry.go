@@ -7,8 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var ErrNeedRetry = errors.New(``)
-
 func Retry(name string, f func() (bool, error), err error, max int) error {
 	var retry bool
 	for i := 0; i < 10; i++ {
