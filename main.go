@@ -59,6 +59,7 @@ func main() {
 		api.New().Run()
 	case "site": // Frontend static file server ( Client: API Caller + (websocket/tcp)Connect Caller )
 		go site.New().Run()
+
 	case "all":
 		withServiceCmd := other
 		ctx, cancel := context.WithCancel(context.Background())
