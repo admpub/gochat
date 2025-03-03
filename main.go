@@ -52,6 +52,7 @@ func main() {
 	case "task": // (Redis)Queue Consumer + (connect)RPC Caller
 		task.New().Run()
 	case "logic": // RPC Server + (Redis)Queue Producer
+		// RPC服务包含对数据库的操作：用户账号的注册、登录等
 		logic.New().Run()
 	case "api": // API Server + (logic)RPC Caller
 		api.New().Run()
