@@ -6,11 +6,20 @@
 package dao
 
 import (
+	"context"
 	"gochat/db"
+	"gochat/logic/iface"
+	"gochat/proto"
 	"time"
 
 	"github.com/pkg/errors"
 )
+
+func init() {
+	iface.GetRepository = func(_ context.Context) iface.Repository {
+		return new(User)
+	}
+}
 
 var dbIns = db.GetDb("gochat")
 
@@ -26,7 +35,9 @@ func (u *User) TableName() string {
 	return "user"
 }
 
-func (u *User) Add() (userId int, err error) {
+func (u *User) Register(req *proto.RegisterRequest) (userId int, err error) {
+	u.UserName = req.Name
+	u.Password = req.Password
 	if u.UserName == "" || u.Password == "" {
 		return 0, errors.New("user_name or password empty!")
 	}
@@ -41,9 +52,28 @@ func (u *User) Add() (userId int, err error) {
 	return u.Id, nil
 }
 
-func (u *User) CheckHaveUserName(userName string) (data User) {
+func (u *User) CheckHaveUserName(userName string) iface.UserData {
+	var data User
 	dbIns.Table(u.TableName()).Where("user_name=?", userName).Take(&data)
-	return
+	return iface.UserData{
+		Id:   data.Id,
+		Name: data.UserName,
+	}
+}
+
+func (u *User) Login(req *proto.LoginRequest) (iface.UserData, error) {
+	userName := req.Name
+	passWord := req.Password
+	var data User
+	var err error
+	dbIns.Table(u.TableName()).Where("user_name=?", userName).Take(&data)
+	if (data.Id == 0) || (passWord != data.Password) {
+		err = errors.New("no this user or password error!")
+	}
+	return iface.UserData{
+		Id:   data.Id,
+		Name: data.UserName,
+	}, err
 }
 
 func (u *User) GetUserNameByUserId(userId int) (userName string) {

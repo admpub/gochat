@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"gochat/config"
-	"gochat/logic/dao"
+	"gochat/logic/iface"
 	"gochat/proto"
 	"gochat/tools"
 
@@ -26,14 +26,12 @@ type RpcLogic struct {
 
 func (rpc *RpcLogic) Register(ctx context.Context, args *proto.RegisterRequest, reply *proto.RegisterReply) (err error) {
 	reply.Code = config.FailReplyCode
-	u := new(dao.User)
+	u := iface.GetRepository(ctx)
 	uData := u.CheckHaveUserName(args.Name)
 	if uData.Id > 0 {
 		return errors.New("this user name already have, please login")
 	}
-	u.UserName = args.Name
-	u.Password = args.Password
-	userId, err := u.Add()
+	userId, err := u.Register(args)
 	if err != nil {
 		logrus.Infof("register err: %s", err.Error())
 		return err
@@ -47,6 +45,8 @@ func (rpc *RpcLogic) Register(ctx context.Context, args *proto.RegisterRequest, 
 	userData := make(map[string]interface{})
 	userData["userId"] = userId
 	userData["userName"] = args.Name
+	// userData["avatar"] = args.Avatar
+	// userData["gender"] = args.Gender
 	RedisSessClient.Do("MULTI")
 	RedisSessClient.HMSet(sessionId, userData)
 	RedisSessClient.Expire(sessionId, 86400*time.Second)
@@ -62,21 +62,16 @@ func (rpc *RpcLogic) Register(ctx context.Context, args *proto.RegisterRequest, 
 
 func (rpc *RpcLogic) Login(ctx context.Context, args *proto.LoginRequest, reply *proto.LoginResponse) (err error) {
 	reply.Code = config.FailReplyCode
-	u := new(dao.User)
-	userName := args.Name
-	passWord := args.Password
-	data := u.CheckHaveUserName(userName)
-	if (data.Id == 0) || (passWord != data.Password) {
-		return errors.New("no this user or password error!")
+	u := iface.GetRepository(ctx)
+	data, err := u.Login(args)
+	if err != nil {
+		return err
 	}
 	loginSessionId := tools.GetSessionIdByUserId(data.Id)
 	//set token
 	//err = redis.HMSet(auth, userData)
 	randToken := tools.GetRandomToken(32)
 	sessionId := tools.CreateSessionId(randToken)
-	userData := make(map[string]interface{})
-	userData["userId"] = data.Id
-	userData["userName"] = data.UserName
 	//check is login
 	token, _ := RedisSessClient.Get(loginSessionId).Result()
 	if token != "" {
@@ -88,6 +83,13 @@ func (rpc *RpcLogic) Login(ctx context.Context, args *proto.LoginRequest, reply 
 		}
 	}
 	RedisSessClient.Do("MULTI")
+
+	userData := make(map[string]interface{})
+	userData["userId"] = data.Id
+	userData["userName"] = data.Name
+	userData["avatar"] = data.Avatar
+	userData["gender"] = data.Gender
+
 	RedisSessClient.HMSet(sessionId, userData)
 	RedisSessClient.Expire(sessionId, 86400*time.Second)
 	RedisSessClient.Set(loginSessionId, randToken, 86400*time.Second)
@@ -105,7 +107,7 @@ func (rpc *RpcLogic) Login(ctx context.Context, args *proto.LoginRequest, reply 
 func (rpc *RpcLogic) GetUserInfoByUserId(ctx context.Context, args *proto.GetUserInfoRequest, reply *proto.GetUserInfoResponse) (err error) {
 	reply.Code = config.FailReplyCode
 	userId := args.UserId
-	u := new(dao.User)
+	u := iface.GetRepository(ctx)
 	userName := u.GetUserNameByUserId(userId)
 	reply.UserId = userId
 	reply.UserName = userName
@@ -191,12 +193,6 @@ func (rpc *RpcLogic) Push(ctx context.Context, args *proto.Send, reply *proto.Su
 	logic := new(Logic)
 	userSidKey := logic.getUserKey(fmt.Sprintf("%d", sendData.ToUserId))
 	serverIdStr := RedisSessClient.Get(userSidKey).Val()
-	//var serverIdInt int
-	//serverIdInt, err = strconv.Atoi(serverId)
-	// if err != nil {
-	// 	logrus.Errorf("logic,push parse int fail: %s", err.Error())
-	// 	return
-	// }
 	err = logic.RedisPublishChannel(serverIdStr, sendData.ToUserId, bodyBytes)
 	if err != nil {
 		logrus.Errorf("logic,redis publish err: %s", err.Error())

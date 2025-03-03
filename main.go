@@ -19,6 +19,8 @@ import (
 	"gochat/pkg/exec"
 	"gochat/site"
 	"gochat/task"
+
+	_ "gochat/logic/dao"
 )
 
 func main() {
